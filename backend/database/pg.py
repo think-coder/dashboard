@@ -13,7 +13,7 @@ def get_connect():
 
     configer = configparser.ConfigParser()
     configer.read(ini_path)
-    pg_config = configer["postgresql"]
+    pg_config = configer["dashboard"]
 
     conn = psycopg2.connect(
         database=pg_config["database"],
@@ -29,4 +29,6 @@ def execute_sql(conn, sql):
     cur.execute(sql)
     result = cur.fetchall()
     conn.commit()
+    cur.close()
+    conn.close()
     return result

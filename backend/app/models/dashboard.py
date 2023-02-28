@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import pyecharts.options as opts
 from pyecharts.charts import Map
+from database import pg, sql
 
 class Dashboard(object):
     def __init__(self):
@@ -65,3 +66,40 @@ class Dashboard(object):
 
         html_file = open(self.html_file, "r").read()
         return html_file
+
+    def get_total_employer(self):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_TOTAL_EMPLOYER)
+        if not res:
+            return 0
+        return res[0].get("count")
+
+    def get_employer_by_limit(self, page, num):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER_BY_LIMIT.format(limit=int(num), offset=int(page * num)))
+        employer_lst = [i.get("employer") for i in res]
+        return employer_lst
+    
+    def get_employer(self, employer):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER.format(employer=employer))
+        if not res:
+            return str()
+        return res[0].get("employer")
+
+    def get_total_by_employer(self, employer):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_TOTAL_BY_EMPLOYER.format(employer=employer))
+        if not res:
+            return str()
+        return res[0].get("count")
+
+    def get_employer_data_by_limit(self, employer, page, num):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER_DATA_BY_LIMIT.format(employer=employer, limit=int(num), offset=int(page) * int(num)))
+        if not res:
+            return str()
+        return res
+
+    
+
