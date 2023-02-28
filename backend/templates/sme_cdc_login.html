@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="stylesheet" href="element_css" />
+    <link rel="stylesheet" href="cdc_css" />
+    <link rel="shortcut icon" href="icon" />
+    <title>境外升学案例查询</title>
+    <style>
+      body {
+        background-image: url(background);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100vh;
+      }
+      #app {
+        width: 100%;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      .body {
+        margin-top: 50px;
+      }
+      .search {
+        margin-top: 20px;
+      }
+      .login_box {
+        width: 400px;
+        height: 400px;
+        background-color: #fff;
+        margin: auto;
+        margin-top: 150px;
+        border-radius: 5px;
+        /* .title设置margin-top无效，给父元素设置overflow:hidden */
+        overflow: hidden;
+      }
+      .title {
+        text-align: center;
+        font-size: 40px;
+        color: #000;
+        margin-top: 80px;
+        margin-bottom: 10px;
+        letter-spacing: 4px;
+        font-family: sans-serif;
+      }
+      .input_box {
+        width: 300px;
+        height: 30px;
+        width: 300px;
+        height: 40px;
+        padding-left: 10px;
+        margin: auto 0;
+        margin-top: 20px;
+      }
+      .button_box {
+        width: 300px;
+        height: 35px;
+        width: 300px;
+        height: 40px;
+        margin: auto 0;
+        margin-top: 20px;
+        border-radius: 5px;
+        background-color: #64a9d9;
+        cursor: pointer;
+        color: #fff;
+      }
+      .logo_box {
+        position: absolute;
+        background-color: #fff;
+        width: 100px;
+        height: 100px;
+        border-radius: 100px;
+        top: 100px;
+        left: 46%;
+        border: solid 5px #A68364;
+        text-align: center;
+      }
+      .logo_img {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="login_box" style="text-align: center;">
+        <h1 class="title" style="color:black;">境外升学案例查询</h1>
+        <input class="input_box" type="text" placeholder="用户名" id="user"></input>
+        <input class="input_box" type="password" placeholder="密码" id="password"></input>
+        <button class="button_box" type="submit" id="submit" onclick="user_login()">登录</button>
+        <div id="showtip" style="color: red; font-size: 14px; display: none; margin-top: 14px">用户名/密码输入错误</div>
+      </div>
+    </div>
+    <!-- 页脚 -->
+    <footer>
+      <div class="wrap">
+        <div class="contact-info">
+            <span>
+              <img src="tel_png">
+              <p>TEL.0755-23518560</p>
+            </span>
+            <span>
+              <img src="address_png">
+              <p>深圳市龙岗区龙翔大道2001号香港中文大学（深圳）TA栋402-403</p>
+            </span>
+            <span>
+              <img src="mail_png" width="16px">
+              <p><a href="mailto:careersme@cuhk.edu.cn" style="color:#fff">careersme@cuhk.edu.cn</a></p>
+            </span>
+        </div>
+        <div class="footer-nav">
+          <ul>
+              <!-- <li><a href="" ></a></li> -->
+              <li><a href="https://library.cuhk.edu.cn">图书馆</a></li>
+              <span class="line"></span>
+              <li><a href="https://www.cuhk.edu.cn/research">科研处</a></li>
+              <span class="line"></span>
+              <li><a href="https://oal.cuhk.edu.cn">学术交流处</a></li>
+              <span class="line"></span>
+              <li><a href="https://osa.cuhk.edu.cn">学生事务处</a></li>
+              <span class="line"></span>
+              <li><a href="http://efoundation.cuhk.edu.cn/">捐赠</a></li>
+          </ul>
+        </div>
+        <div class="copyright">
+          <div class="top">
+            <span>隐私政策</span>
+            <span class="line bgw"></span>
+            <span>免责声明</span>
+            <span class="line bgw"></span>
+          </div>
+          <span class="mt">Copyright © 香港中文大学（深圳）<br/>经管学院 2022 版权所有</span>
+        </div>
+      </div>
+    </footer>
+    <script src="vue"></script>
+    <script src="element"></script>
+    <script src="axios"></script>
+    <script>
+      function user_login() {
+        // 1、获取页面输入的用户名和密码
+        var User = document.getElementById("user");
+        var Password = document.getElementById("password");
+
+        // 2、发送POST请求，获取 HTML
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', 'http://10.26.9.1:8000/sme_cdc/', true)
+        httpRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+        httpRequest.send(`username=${User.value}&&password=${Password.value}`)
+        httpRequest.onreadystatechange = function () {
+          console.log(httpRequest.readyState)
+          console.log(httpRequest.status)
+          // 3、成功时
+          if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            // 读取返回的JSON格式的HTML数据，并做页面跳转
+            // JSON格式的HTML数据
+            var html_json = httpRequest.responseText;
+            // TODO 解析json，并做HTML页面跳转
+            document.open();
+            document.write(html_json) 
+            document.close();
+          };
+          // 4、失败时
+          if (httpRequest.readyState == 4 && httpRequest.status == 401) {
+            // 页面上显示 "密码错误，请重新输入字样"
+            document.getElementById('showtip').style.display = 'block';
+          };
+        }
+      }
+    </script>
+  </body>
+</html>
