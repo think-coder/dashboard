@@ -7,7 +7,7 @@ class Dashboard(object):
     def __init__(self):
         self.html_file = "./test-xray.html"
 
-    def get_dashboard(self):
+    def get_map_by_contry(self, country):
         province_data = [
             ['河南省', 45.23], ['北京市', 37.56],
             ['河北省', 21], ['辽宁省', 12],
@@ -100,6 +100,19 @@ class Dashboard(object):
         if not res:
             return str()
         return res
-
     
-
+    def get_all_province(self):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_ALL_PROVINCE)
+        if not res:
+            return list()
+        
+        return [i.get("province") for i in res if i.get("province")]
+    
+    def get_city_by_province(self, province):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_CITY_BY_PROVINCE.format(province=province))
+        if not res:
+            return list()
+        
+        return [i.get("city") for i in res]

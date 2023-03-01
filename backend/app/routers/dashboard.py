@@ -13,26 +13,41 @@ router = APIRouter(
     },
 )
 
-@router.get("/", response_class=HTMLResponse)
-async def dashboard(request: Request):
-    return Dashboard().get_dashboard()
+@router.get("/get_map_by_contry", response_class=HTMLResponse)
+async def get_map_by_contry(request: Request, country):
+    return Dashboard().get_map_by_contry(country)
 
 @router.get("/get_total_employer")
 async def get_total_employer(request: Request):
+    """获取雇主总数"""
     return Dashboard().get_total_employer()
 
 @router.get("/get_employer_by_limit")
 async def get_employer_by_limit(request: Request, page, num):
+    """获取区间雇主列表"""
     return Dashboard().get_employer_by_limit(page, num)
 
 @router.get("/get_employer")
 async def get_employer(request: Request, employer):
+    """检索雇主是否存在"""
     return Dashboard().get_employer(employer)
 
 @router.get("/get_total_by_employer")
 async def get_total_by_employer(request: Request, employer):
+    """根据雇主名称获取招聘数量"""
     return Dashboard().get_total_by_employer(employer)
 
 @router.get("/get_employer_data_by_limit")
 async def get_employer_data_by_limit(request: Request, employer, page, num):
+    """获取雇主的区间数据"""
     return Dashboard().get_employer_data_by_limit(employer, page, num)
+
+@router.get("/get_all_province")
+async def get_all_province(request: Request):
+    """获取所有省份名称"""
+    return Dashboard().get_all_province()
+
+@router.get("/get_city_by_province")
+async def get_city_by_province(request: Request, province):
+    """根据省份获取市信息"""
+    return Dashboard().get_city_by_province(province)
