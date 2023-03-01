@@ -8,3 +8,5 @@ GET_EMPLOYER_BY_LIMIT = """SELECT DISTINCT(employer) FROM dashboard_data LIMIT {
 GET_EMPLOYER = """SELECT DISTINCT(employer) FROM dashboard_data WHERE employer='{employer}';"""
 GET_EMPLOYER_DATA_BY_LIMIT = """SELECT * FROM dashboard_data WHERE employer='{employer}' LIMIT {limit} OFFSET {offset};"""
 GET_TOTAL_BY_EMPLOYER = """SELECT COUNT(*) FROM dashboard_data WHERE employer='{employer}';"""
+GET_ALL_PROVINCE = """SELECT DISTINCT(province) FROM province_city_map;"""
+GET_CITY_BY_PROVINCE = """SELECT DISTINCT(city) FROM province_city_map WHERE province='{province}';"""
