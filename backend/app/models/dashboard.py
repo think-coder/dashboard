@@ -71,48 +71,52 @@ class Dashboard(object):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_TOTAL_EMPLOYER)
         if not res:
-            return 0
-        return res[0].get("count")
+            return {"total": 0}
+
+        return {"total": res[0].get("count")}
 
     def get_employer_by_limit(self, page, num):
         conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_EMPLOYER_BY_LIMIT.format(limit=int(num), offset=int(page * num)))
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER_BY_LIMIT.format(limit=int(num), offset=int(page) * int(num)))
         employer_lst = [i.get("employer") for i in res]
-        return employer_lst
+        return {"employer_list": employer_lst}
     
     def get_employer(self, employer):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_EMPLOYER.format(employer=employer))
         if not res:
-            return str()
-        return res[0].get("employer")
+            return {"employer": str()}
+
+        return {"employer": res[0].get("employer")}
 
     def get_total_by_employer(self, employer):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_TOTAL_BY_EMPLOYER.format(employer=employer))
         if not res:
-            return str()
-        return res[0].get("count")
+            return {"total": 0}
+
+        return {"total": res[0].get("count")}
 
     def get_employer_data_by_limit(self, employer, page, num):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_EMPLOYER_DATA_BY_LIMIT.format(employer=employer, limit=int(num), offset=int(page) * int(num)))
         if not res:
-            return str()
-        return res
-    
+            return {"data": list()}
+
+        return {"data": res}
+
     def get_all_province(self):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_ALL_PROVINCE)
         if not res:
-            return list()
-        
-        return [i.get("province") for i in res if i.get("province")]
+            return {"data": list()}
+
+        return {"data": [i.get("province") for i in res if i.get("province")]}
     
     def get_city_by_province(self, province):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_CITY_BY_PROVINCE.format(province=province))
         if not res:
-            return list()
-        
-        return [i.get("city") for i in res]
+            return {"data": list()}
+
+        return {"data": [i.get("city") for i in res]}
