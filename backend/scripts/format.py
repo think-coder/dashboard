@@ -23,17 +23,21 @@ def execute_sql(conn, sql):
 
 def main():
     conn = get_connect()
-    _sql = """select distinct("workLocation") from dashboard_data_copy1;"""
+    _sql = """select distinct("work_location") from dashboard_data;"""
     res = execute_sql(conn, _sql)
-    work_location_list = [i.get("workLocation") for i in res if i.get("workLocation")]
+    work_location_list = [i.get("work_location") for i in res if i.get("work_location")]
     for i in work_location_list:
-        _sql_1 = """select province,city from province_city_map where city like '%{city}%'""".format(city=i)
+        _sql_1 = """select province,city from province_city_map where city like '%{city}%';""".format(city=i)
         res = execute_sql(conn, _sql_1)
         if not res:
             continue
-        _sql_2 = """update dashboard_data_copy1 set workLocation='{worklocation}', workProvince='{workProvince}' where workLocation='{item}'""".format(worklocation=res[0].get("city"), workProvince=res[0].get("province"), item=i)
+        _sql_2 = """update dashboard_data set work_location='{worklocation}', work_province='{workProvince}' where work_location='{item}';""".format(worklocation=res[0].get("city"), workProvince=res[0].get("province"), item=i)
         print(_sql_2)
-        res = execute_sql(conn, _sql_2)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(_sql_2)
+        conn.commit()
+        cur.close()
+    conn.close()
 
 
 

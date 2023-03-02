@@ -13,10 +13,6 @@ router = APIRouter(
     },
 )
 
-@router.get("/get_map_by_contry", response_class=HTMLResponse)
-async def get_map_by_contry(request: Request, country):
-    return Dashboard().get_map_by_contry(country)
-
 @router.get("/get_total_employer")
 async def get_total_employer(request: Request):
     """获取雇主总数"""
@@ -49,5 +45,15 @@ async def get_all_province(request: Request):
 
 @router.get("/get_city_by_province")
 async def get_city_by_province(request: Request, province):
-    """根据省份获取市信息"""
+    """获取省份下属市县名称"""
     return Dashboard().get_city_by_province(province)
+
+@router.get("/get_map_by_country", response_class=HTMLResponse)
+async def get_map_by_country(request: Request, country):
+    """获取国级展示图"""
+    return Dashboard().get_map_by_country(country)
+
+@router.get("/get_map_by_province", response_class=HTMLResponse)
+async def get_map_by_country(request: Request, province):
+    """获取省级展示图"""
+    return Dashboard().get_map_by_country(province)
