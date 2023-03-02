@@ -56,4 +56,4 @@ async def get_map_by_country(request: Request, country):
 @router.get("/get_map_by_province", response_class=HTMLResponse)
 async def get_map_by_country(request: Request, province):
     """获取省级展示图"""
-    return Dashboard().get_map_by_country(province)
+    return Dashboard().get_map_by_province(province)

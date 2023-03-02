@@ -58,6 +58,14 @@ class Dashboard(object):
 
         return {"data": [i.get("province") for i in res if i.get("province")]}
     
+    def get_all_city(self, province):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_ALL_CITY.format(province=province))
+        if not res:
+            return {"data": list()}
+        
+        return {"data": [i.get("city") for i in res if i.get("city")]}
+
     def get_city_by_province(self, province):
         conn = pg.get_connect()
         res = pg.execute_sql(conn, sql.GET_CITY_BY_PROVINCE.format(province=province))
@@ -90,7 +98,7 @@ class Dashboard(object):
             )
             .set_global_opts(
                 title_opts=opts.TitleOpts(
-                    title="2017年全国各省级区域每上市公司平均招聘数量",
+                    title="全国各省级区域每上市公司平均招聘数量",
                     pos_left='30%',
                     pos_top='10'
                 ),
@@ -117,7 +125,55 @@ class Dashboard(object):
         return html_file
 
     def get_map_by_province(self, province):
-        pass
+        save_path = self.map_data_path + "/" + province + ".html"
+        if os.path.exists(save_path):
+            html_file = open(save_path, "r").read()
+            return html_file
+        
+        city_data = self.compute_province_data(province)
+        print(city_data)
+
+        d_map = (
+            Map()
+            .add(
+                series_name="{province}每上市公司平均招聘数量".format(province=province),
+                maptype="广东",
+                data_pair=city_data,
+                is_selected=True,
+                is_roam=True,
+                center=None,
+                name_map=None,
+                symbol=None,
+                is_map_symbol_show=True,
+                layout_center=None,
+            )
+            .set_global_opts(
+                title_opts=opts.TitleOpts(
+                    title="{province}每上市公司平均招聘数量".format(province=province),
+                    pos_left='30%',
+                    pos_top='10'
+                ),
+                visualmap_opts=opts.VisualMapOpts(
+                    min_=0,
+                    max_=80,
+                    range_text=["High", "Low"],
+                    is_calculable=True,
+                    is_piecewise=False,
+                    # range_color=["white", "pink", "red"],
+                    range_color=["#E0E0E0", "#CE0000"],
+                ),
+                legend_opts=opts.LegendOpts(is_show=False),
+            )
+            .set_series_opts(
+                label_opts=opts.LabelOpts(is_show=False),
+                # itemstyle_opts=opts.ItemStyleOpts(color="transparent")
+                showLegendSymbol=False
+            )
+            .render(path=save_path)
+        )
+
+        html_file = open(save_path, "r").read()
+        return html_file
 
     def compute_country_data(self, country):
         province_data = list()
@@ -130,7 +186,7 @@ class Dashboard(object):
         return province_data
     
     def compute_country_province_data(self, province):
-        # 获取该省需求招聘总数
+        # 获取该省招聘总数
         _sql_1 = """SELECT COUNT(*) FROM dashboard_data WHERE work_province='{province}';""".format(province=province)
         conn = pg.get_connect()
         data = pg.execute_sql(conn, _sql_1)
@@ -144,3 +200,30 @@ class Dashboard(object):
         # 区域每上市公司招聘数量 = 该区域内招聘需求总数 / 该区域内有招聘需求的上市公司总数
         per = round(total_pos / total_emp, 1) if total_emp else 0.0
         return [province, per]
+
+    def compute_province_data(self, province):
+        city_data = list()
+        # 获取市名称列表
+        city_list = self.get_all_city(province).get("data", list())
+        # 创建线程池，执行任务
+        executor = ThreadPoolExecutor(max_workers=10)
+        city_data = [data for data in executor.map(self.compute_province_city_data, city_list)]
+        executor.shutdown()
+        return city_data
+    
+    def compute_province_city_data(self, city):
+        # 获取该市招聘总数
+        _sql_1 = """SELECT COUNT(*) FROM dashboard_data WHERE work_location='{worklocation}';""".format(worklocation=city)
+        conn = pg.get_connect()
+        data = pg.execute_sql(conn, _sql_1)
+        total_pos = data[0].get("count")
+        # 获取该省招聘公司总数
+        _sql_2 = """SELECT COUNT(DISTINCT(employer)) FROM dashboard_data WHERE work_location='{worklocation}';""".format(worklocation=city)
+        conn = pg.get_connect()
+        data = pg.execute_sql(conn, _sql_2)
+        total_emp = data[0].get("count")
+        # 计算每上市公司招聘数量
+        # 区域每上市公司招聘数量 = 该区域内招聘需求总数 / 该区域内有招聘需求的上市公司总数
+        per = round(total_pos / total_emp, 1) if total_emp else 0.0
+        print([city, per])
+        return [city, per]
