@@ -1,36 +1,85 @@
 # -*- coding:utf-8 -*-
+import os
+from concurrent.futures import ThreadPoolExecutor
+
 import pyecharts.options as opts
 from pyecharts.charts import Map
+
 from database import pg, sql
+
 
 class Dashboard(object):
     def __init__(self):
-        self.html_file = "./test-xray.html"
+        self.map_data_path = "./map_data"
 
-    def get_map_by_contry(self, country):
-        province_data = [
-            ['河南省', 45.23], ['北京市', 37.56],
-            ['河北省', 21], ['辽宁省', 12],
-            ['江西省', 6], ['上海市', 20],
-            ['安徽省', 10], ['江苏省', 16],
-            ['湖南省', 9], ['浙江省', 13],
-            ['海南省', 2], ['广东省', 22],
-            ['湖北省', 8], ['黑龙江省', 11],
-            ['澳门特别行政区', 1], ['陕西省', 11],
-            ['四川省', 7], ['内蒙古', 3],
-            ['重庆市', 3], ['云南省', 6],
-            ['贵州省', 2], ['吉林省', 3],
-            ['山西省', 12], ['山东省', 11],
-            ['福建省', 4], ['青海省', 1],
-            ['天津市', 1], ['其他', 1],
-        ]
+    def get_total_employer(self):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_TOTAL_EMPLOYER)
+        if not res:
+            return {"total": 0}
+
+        return {"total": res[0].get("count")}
+
+    def get_employer_by_limit(self, page, num):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER_BY_LIMIT.format(limit=int(num), offset=int(page) * int(num)))
+        employer_lst = [i.get("employer") for i in res]
+        return {"employer_list": employer_lst}
+    
+    def get_employer(self, employer):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER.format(employer=employer))
+        if not res:
+            return {"employer": str()}
+
+        return {"employer": res[0].get("employer")}
+
+    def get_total_by_employer(self, employer):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_TOTAL_BY_EMPLOYER.format(employer=employer))
+        if not res:
+            return {"total": 0}
+
+        return {"total": res[0].get("count")}
+
+    def get_employer_data_by_limit(self, employer, page, num):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_EMPLOYER_DATA_BY_LIMIT.format(employer=employer, limit=int(num), offset=int(page) * int(num)))
+        if not res:
+            return {"data": list()}
+
+        return {"data": res}
+
+    def get_all_province(self):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_ALL_PROVINCE)
+        if not res:
+            return {"data": list()}
+
+        return {"data": [i.get("province") for i in res if i.get("province")]}
+    
+    def get_city_by_province(self, province):
+        conn = pg.get_connect()
+        res = pg.execute_sql(conn, sql.GET_CITY_BY_PROVINCE.format(province=province))
+        if not res:
+            return {"data": list()}
+
+        return {"data": [i.get("city") for i in res]}
+
+    def get_map_by_country(self, country):
+        save_path = "/".join([self.map_data_path, "country.html"])
+        if os.path.exists(save_path):
+            html_file = open(save_path, "r").read()
+            return html_file
+
+        province_data = self.compute_country_data(country)
+
         d_map = (
             Map()
             .add(
                 series_name="每上市公司平均招聘数量",
                 maptype="china",
                 data_pair=province_data,
-
                 is_selected=True,
                 is_roam=True,
                 center=None,
@@ -47,7 +96,7 @@ class Dashboard(object):
                 ),
                 visualmap_opts=opts.VisualMapOpts(
                     min_=0,
-                    max_=50,
+                    max_=80,
                     range_text=["High", "Low"],
                     is_calculable=True,
                     is_piecewise=False,
@@ -61,58 +110,37 @@ class Dashboard(object):
                 # itemstyle_opts=opts.ItemStyleOpts(color="transparent")
                 showLegendSymbol=False
             )
-            .render(path=self.html_file)
+            .render(path=save_path)
         )
 
-        html_file = open(self.html_file, "r").read()
+        html_file = open(save_path, "r").read()
         return html_file
 
-    def get_total_employer(self):
-        conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_TOTAL_EMPLOYER)
-        if not res:
-            return 0
-        return res[0].get("count")
+    def get_map_by_province(self, province):
+        pass
 
-    def get_employer_by_limit(self, page, num):
-        conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_EMPLOYER_BY_LIMIT.format(limit=int(num), offset=int(page * num)))
-        employer_lst = [i.get("employer") for i in res]
-        return employer_lst
+    def compute_country_data(self, country):
+        province_data = list()
+        # 获取省名称列表
+        province_list = self.get_all_province().get("data", list())
+        # 创建线程池，执行任务
+        executor = ThreadPoolExecutor(max_workers=10)
+        province_data = [data for data in executor.map(self.compute_country_province_data, province_list)]
+        executor.shutdown()
+        return province_data
     
-    def get_employer(self, employer):
+    def compute_country_province_data(self, province):
+        # 获取该省需求招聘总数
+        _sql_1 = """SELECT COUNT(*) FROM dashboard_data WHERE work_province='{province}';""".format(province=province)
         conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_EMPLOYER.format(employer=employer))
-        if not res:
-            return str()
-        return res[0].get("employer")
-
-    def get_total_by_employer(self, employer):
+        data = pg.execute_sql(conn, _sql_1)
+        total_pos = data[0].get("count")
+        # 获取该省招聘公司总数
+        _sql_2 = """SELECT COUNT(DISTINCT(employer)) FROM dashboard_data WHERE work_province='{province}';""".format(province=province)
         conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_TOTAL_BY_EMPLOYER.format(employer=employer))
-        if not res:
-            return str()
-        return res[0].get("count")
-
-    def get_employer_data_by_limit(self, employer, page, num):
-        conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_EMPLOYER_DATA_BY_LIMIT.format(employer=employer, limit=int(num), offset=int(page) * int(num)))
-        if not res:
-            return str()
-        return res
-    
-    def get_all_province(self):
-        conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_ALL_PROVINCE)
-        if not res:
-            return list()
-        
-        return [i.get("province") for i in res if i.get("province")]
-    
-    def get_city_by_province(self, province):
-        conn = pg.get_connect()
-        res = pg.execute_sql(conn, sql.GET_CITY_BY_PROVINCE.format(province=province))
-        if not res:
-            return list()
-        
-        return [i.get("city") for i in res]
+        data = pg.execute_sql(conn, _sql_2)
+        total_emp = data[0].get("count")
+        # 计算每上市公司招聘数量
+        # 区域每上市公司招聘数量 = 该区域内招聘需求总数 / 该区域内有招聘需求的上市公司总数
+        per = round(total_pos / total_emp, 1) if total_emp else 0.0
+        return [province, per]
