@@ -74,7 +74,7 @@ def load_data(request):
         database='dashboard',
         user='postgres',
         password='postgres',
-        host='127.0.0.1',
+        host='106.52.123.19',
         port='5432',
     )
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
