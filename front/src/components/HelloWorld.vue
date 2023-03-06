@@ -1,57 +1,59 @@
 <template>
-  <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="首页" name="1">
-       <el-tabs :tab-position="tabPosition" style="height: 200px;">
-        <el-tab-pane label="宁德时代">宁德时代</el-tab-pane>
-        <el-tab-pane label="平安银行">平安银行</el-tab-pane>
-        <el-tab-pane label="万达电影">万达电影</el-tab-pane>
-      </el-tabs>
-    </el-tab-pane>
-    <el-tab-pane label="全国招聘数据" name="2">全国招聘数据</el-tab-pane>
-    <el-tab-pane label="省级招聘数据" name="3">
-      <el-tabs :tab-position="tabPosition" style="height: 200px;">
-        <el-tab-pane label="山西省">山西省</el-tab-pane>
-        <el-tab-pane label="山东省">山东省</el-tab-pane>
-        <el-tab-pane label="广东省">广东省</el-tab-pane>
-      </el-tabs>
-    </el-tab-pane>
-    <el-tab-pane label="市级招聘数据" name="4">市级招聘数据</el-tab-pane>
-    <el-tab-pane label="一线/新一线" name="5">一线/新一线</el-tab-pane>
-    <el-tab-pane label="增长最快" name="6">增长最快</el-tab-pane>
-    <el-tab-pane label="下降最快" name="7">下降最快</el-tab-pane>
-  </el-tabs>
+  <div class="hello">
+    <h1>{{ msg }}</h1>
+    <p>
+      For a guide and recipes on how to configure / customize this project,<br>
+      check out the
+      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
+    </p>
+    <h3>Installed CLI Plugins</h3>
+    <ul>
+      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
+      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
+      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
+    </ul>
+    <h3>Essential Links</h3>
+    <ul>
+      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
+      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
+      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
+      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
+      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
+    </ul>
+    <h3>Ecosystem</h3>
+    <ul>
+      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
+      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
+      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
+      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
+      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
+    </ul>
+  </div>
 </template>
+
 <script>
-  export default {
-    data() {
-      return {
-        activeName: '1',
-        tabPosition: 'left'
-      };
-    },
-    created(){
-      this.getIndexData()
-    },
-    methods: {
-      getIndexData(){
-        this.$http.get('/dashboard/get_total_employer').then(res=>{
-          console.log(res,'res')
-        }).catch(()=>{
-          alert('接口错误！')
-        })
-      },
-      handleClick(tab, event) {
-        console.log(tab, event);
-      }
-    }
-  };
+export default {
+  name: 'HelloWorld',
+  props: {
+    msg: String
+  }
+}
 </script>
-<style>
-  .el-dropdown-link {
-    cursor: pointer;
-    color: #409EFF;
-  }
-  .el-icon-arrow-down {
-    font-size: 12px;
-  }
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+h3 {
+  margin: 40px 0 0;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
+}
 </style>
