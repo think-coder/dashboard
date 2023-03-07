@@ -1,3 +1,6 @@
+import os
+import pyecharts.options as opts
+from pyecharts.charts import Map
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from .models import Data, ProvinceCityMap
@@ -6,38 +9,68 @@ from .models import Data, ProvinceCityMap
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+def compute_province_per(country):
+    """计算国级平均招聘量"""
+    data_list = ProvinceCityMap.objects.all().distinct("province")
+    per_list = list()
+    for data in data_list:
+        province = data.province
+        pos_count = Data.objects.filter(work_province=province).count()
+        employer_count = Data.objects.filter(work_province=province).distinct("employer").count()
+        per = round(pos_count / employer_count, 1)
+        per_list.append([province, per])
+    return per_list
+
+def compute_city_per(province):
+    """计算省级平均招聘量"""
+    data_list = ProvinceCityMap.objects.filter(province=province).distinct("city")
+    per_list = list()
+    for data in data_list:
+        city = data.city
+        pos_count = Data.objects.filter(work_province=province).filter(work_location=city).count()
+        employer_count = Data.objects.filter(work_province=province).filter(work_location=city).distinct("employer").count()
+        per = round(pos_count / employer_count, 1)
+        per_list.append([city, per])
+    return per_list
+
 def get_employer(request, employer):
     """检索雇主是否存在"""
-    data = Data.objects.filter(employer=employer).distinct("employer")
-    if not data or len(data) != 1:
-        return HttpResponse(str())
+    data = Data.objects.filter(employer__icontains = employer).distinct("employer")
+    employer_list = [i.employer for i in data]
 
-    for i in data:
-        return HttpResponse(i.employer)
+    return JsonResponse({
+        "data": employer_list
+    })
 
 def get_total_employer(request):
     """获取雇主总数"""
-    total_count = Data.objects.count()
-    return HttpResponse(total_count)
+    data = Data.objects.all().distinct("employer").count()
+    return JsonResponse({
+        "data": data
+    })
 
 def get_employer_by_limit(request, page, num):
     """获取区间雇主列表"""
-    employer_list = Data.objects.all().distinct("employer")[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
-    print(employer_list)
-    print(type(employer_list))
-    return HttpResponse(employer_list)
+    data = Data.objects.all().distinct("employer")[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
+    employer_list = [i.employer for i in data]
+    return JsonResponse({
+        "data": employer_list
+    })
 
 def get_total_by_employer(request, employer):
     """根据雇主名称获取招聘数量"""
-    employer_count = Data.objects.filter(employer=employer).count()
-    print(employer_count)
-    return HttpResponse(employer_count)
+    data = Data.objects.filter(employer=employer).count()
+    return JsonResponse({
+        "data": data
+    })
 
 def get_employer_data_by_limit(request, employer, page, num):
     """获取雇主的区间数据"""
-    employer_list = Data.objects.filter(employer=employer)[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
-    print(employer_list)
-    return HttpResponse(employer_list)
+    data = Data.objects.filter(employer=employer)[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
+    employer_list = [i.employer for i in data]
+    return JsonResponse({
+        "data": employer_list
+    })
 
 def get_all_province(request):
     """获取所有省份名称"""
@@ -59,13 +92,139 @@ def get_city_by_province(request, province):
 
 def get_map_by_country(request, country):
     """获取国级展示图"""
-    print(country)
-    return render(request, "country.html", {})
+    file_name = ".".join([country, "html"])
+    save_path = "./dashboard/templates/"
+    if os.path.exists(save_path + file_name):
+        return render(request, file_name, {})
+    per_list = compute_province_per(country)
+
+    d_map = (
+            Map()
+            .add(
+                series_name="每上市公司平均招聘数量",
+                maptype="china",
+                data_pair=per_list,
+
+                is_selected=True,
+                is_roam=True,
+                center=None,
+                name_map=None,
+                symbol=None,
+                is_map_symbol_show=True,
+                layout_center=None,
+            )
+            .set_global_opts(
+                title_opts=opts.TitleOpts(
+                    title="全国各省级区域每上市公司平均招聘数量",
+                    pos_left='30%',
+                    pos_top='10'
+                ),
+                visualmap_opts=opts.VisualMapOpts(
+                    min_=0,
+                    max_=80,
+                    range_text=["High", "Low"],
+                    is_calculable=True,
+                    is_piecewise=False,
+                    # range_color=["white", "pink", "red"],
+                    range_color=["#E0E0E0", "#CE0000"],
+                ),
+                legend_opts=opts.LegendOpts(is_show=False),
+            )
+            .set_series_opts(
+                label_opts=opts.LabelOpts(is_show=False),
+                # itemstyle_opts=opts.ItemStyleOpts(color="transparent")
+                showLegendSymbol=False
+            )
+            .render(path=save_path + file_name)
+        )    
+
+    return render(request, file_name, {})
 
 def get_map_by_province(request, province):
     """获取省级展示图"""
-    print(province)
-    return render(request, "country.html", {})
+    file_name = ".".join([province, "html"])
+    save_path = "./dashboard/templates/"
+    if os.path.exists(save_path + file_name):
+        return render(request, file_name, {})
+
+    per_list = compute_city_per(province)
+    province_maptype = {
+        "新疆维吾尔自治区": "新疆",
+        "青海省": "青海",
+        "湖北省": "湖北",
+        "山西省": "山西",
+        "云南省": "云南",
+        "河北省": "河北",
+        "广西壮族自治区": "广西",
+        "海南省": "海南",
+        "上海市": "上海",
+        "辽宁省": "辽宁",
+        "福建省": "福建",
+        "陕西省": "陕西",
+        "四川省": "四川",
+        "贵州省": "贵州",
+        "广东省": "广东",
+        "北京市": "北京",
+        "黑龙江省": "黑龙江",
+        "江苏省": "江苏",
+        "天津市": "天津",
+        "重庆市": "重庆",
+        "山东省": "山东",
+        "内蒙古自治区": "内蒙古",
+        "宁夏回族自治区": "宁夏",
+        "浙江省": "浙江",
+        "西藏自治区": "西藏",
+        "吉林省": "吉林",
+        "安徽省": "安徽",
+        "江西省": "江西",
+        "甘肃省": "甘肃",
+        "河南省": "河南",
+        "湖南省": "湖南"
+    }
+    province_maptype = province_maptype.get(province, province)
+    d_map = (
+            Map()
+            .add(
+                series_name="每上市公司平均招聘数量",
+                maptype=province_maptype,
+                data_pair=per_list,
+
+                is_selected=True,
+                is_roam=True,
+                center=None,
+                name_map=None,
+                symbol=None,
+                is_map_symbol_show=True,
+                layout_center=None,
+            )
+            .set_global_opts(
+                title_opts=opts.TitleOpts(
+                    title="{province}每上市公司平均招聘数量".format(province=province),
+                    pos_left='30%',
+                    pos_top='10'
+                ),
+                visualmap_opts=opts.VisualMapOpts(
+                    min_=0,
+                    max_=80,
+                    range_text=["High", "Low"],
+                    is_calculable=True,
+                    is_piecewise=False,
+                    # range_color=["white", "pink", "red"],
+                    range_color=["#E0E0E0", "#CE0000"],
+                ),
+                legend_opts=opts.LegendOpts(is_show=False),
+            )
+            .set_series_opts(
+                label_opts=opts.LabelOpts(is_show=False),
+                # itemstyle_opts=opts.ItemStyleOpts(color="transparent")
+                showLegendSymbol=False
+            )
+            .render(path=save_path + file_name)
+        )    
+
+    return render(request, file_name, {})
+
+
 
 def load_data(request):
     import psycopg2
