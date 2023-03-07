@@ -1,3 +1,4 @@
+// About.vue
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="首页" name="1">
@@ -22,36 +23,43 @@
   </el-tabs>
 </template>
 <script>
-  export default {
-    data() {
-      return {
-        activeName: '1',
-        tabPosition: 'left'
-      };
-    },
-    // created(){
-    //   this.getIndexData()
-    // },
-    methods: {
-      // getIndexData(){
-      //   this.$http.get('/dashboard/get_total_employer').then(res=>{
-      //     console.log(res,'res')
-      //   }).catch(()=>{
-      //     alert('接口错误！')
-      //   })
-      // },
-      handleClick(tab, event) {
-        console.log(tab, event);
-      }
+import axios from 'axios'
+import { defineComponent, onMounted } from "vue"
+export default defineComponent({
+  name: "About",
+  data() {
+    return {
+      activeName: "1",
+      tabPosition: "left"
     }
-  };
+  },
+  methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    }
+  },
+  setup()
+  {
+    onMounted(
+      () => {
+        axios({
+          method: "get",
+          url: "http://172.19.125.144:8001/dashboard/get_total_employer/"
+        })
+        .then(res => {
+          console.log(res.data)
+          console.log(res)
+        })
+        .catch(err => {
+          console.log("err")
+        })
+      }
+    )
+    let a = 1
+    return {
+      a
+    }
+  }
+})
+
 </script>
-<style>
-  .el-dropdown-link {
-    cursor: pointer;
-    color: #409EFF;
-  }
-  .el-icon-arrow-down {
-    font-size: 12px;
-  }
-</style>
