@@ -74,11 +74,11 @@ def load_data(request):
         database='dashboard',
         user='postgres',
         password='postgres',
-        host='127.0.0.1',
+        host='106.52.123.19',
         port='5432',
     )
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    for i in range(1, 4193544):
+    for i in range(1, 4193545):
         print("第{_num}条数据...".format(_num=i))
         _sql = """
             SELECT * FROM data WHERE id={_id};
