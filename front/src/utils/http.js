@@ -19,9 +19,6 @@ request.interceptors.request.use(function (config) {
     ...config,
     headers: {
       ...config.headers,
-      authorization:"Bearer" + " " + localStorage.getItem('classtoken'),
-      //  "Bearer" + " " + localStorage.getItem('user_token') 
-      "Content-Type":"multipart/form-data"
     }
   }
   // 发送请求之前做些什么
