@@ -5,15 +5,53 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from .models import Data, ProvinceCityMap, ProvinceMaptype
 
+
+import time
+import json
+from apscheduler.schedulers.background import BackgroundScheduler
+from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
+
+from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED
+
+# 实例化调度器
+scheduler = BackgroundScheduler(timezone='Asia/Shanghai')
+# 调度器使用DjangoJobStore()
+scheduler.add_jobstore(DjangoJobStore(), "default")
+
+@register_job(scheduler, "interval", seconds=180, args=[''], id='job_generate_country_map', replace_existing=True)
+def job_generate_country_map(param):
+    """任务：生成国级HTML文件"""
+    print("Begin: job_generate_country_map")
+    Logic().generate_country_map("中国")
+    print("End: job_generate_country_map")
+
+@register_job(scheduler, "interval", seconds=180, args=[''], id='job_generate_province_map', replace_existing=True)
+def job_generate_province_map(param):
+    """任务：生成省级HTML文件"""
+    print("Begin: job_generate_province_map")
+    res_data = ProvinceCityMap.objects.all().distinct("province")
+    province_list = [i.province for i in res_data]
+    
+    # 构建线程池，批处理任务
+    pool = ThreadPoolExecutor(max_workers=10)
+    all_task=[pool.submit(Logic().generate_province_map, (i)) for i in province_list]
+    wait(all_task, return_when=ALL_COMPLETED)
+    pool.shutdown()
+    print("End: job_generate_province_map")
+
+register_events(scheduler)
+scheduler.start()
+
+
 class Compute(object):
-    def compute_province_per(self, country):
+    def compute_province_per(self, country, year):
         """计算国级平均招聘量"""
         data_list = ProvinceCityMap.objects.all().distinct("province")
         per_list = list()
         for data in data_list:
             province = data.province
-            pos_count = Data.objects.filter(work_province=province).count()
-            employer_count = Data.objects.filter(work_province=province).distinct("employer").count()
+            pos_count = Data.objects.filter(year=year).filter(work_province=province).count()
+            employer_count = Data.objects.filter(year=year).filter(work_province=province).distinct("employer").count()
             per = round(pos_count / employer_count, 1)
             per_list.append([province, per])
         return per_list
@@ -32,6 +70,10 @@ class Compute(object):
 
 
 class Logic(object):
+    def __init__(self):
+        self.file_name = "{file_name}.html"
+        self.save_path = "./dashboard/templates/"
+
     def get_employer(self, request, employer):
         """检索雇主是否存在"""
         data = Data.objects.filter(employer__icontains = employer).distinct("employer")
@@ -95,62 +137,74 @@ class Logic(object):
 
     def get_map_by_country(self, request, country):
         """获取国级展示图"""
-        file_name = ".".join([country, "html"])
-        save_path = "./dashboard/templates/"
-        if os.path.exists(save_path + file_name):
-            return render(request, file_name, {})
-        per_list = Compute().compute_province_per(country)
+        if os.path.exists(self.save_path + self.file_name.format(file_name=country)):
+            return render(request, self.file_name.format(file_name=country), {})
+        
+        self.generate_country_map(country)
 
-        d_map = (
-            Map()
-            .add(
-                series_name="每上市公司平均招聘数量",
-                maptype="china",
-                data_pair=per_list,
-
-                is_selected=True,
-                is_roam=True,
-                center=None,
-                name_map=None,
-                symbol=None,
-                is_map_symbol_show=True,
-                layout_center=None,
-            )
-            .set_global_opts(
-                title_opts=opts.TitleOpts(
-                    title="全国各省级区域每上市公司平均招聘数量",
-                    pos_left='30%',
-                    pos_top='10'
-                ),
-                visualmap_opts=opts.VisualMapOpts(
-                    min_=0,
-                    max_=80,
-                    range_text=["High", "Low"],
-                    is_calculable=True,
-                    is_piecewise=False,
-                    # range_color=["white", "pink", "red"],
-                    range_color=["#E0E0E0", "#CE0000"],
-                ),
-                legend_opts=opts.LegendOpts(is_show=False),
-            )
-            .set_series_opts(
-                label_opts=opts.LabelOpts(is_show=False),
-                # itemstyle_opts=opts.ItemStyleOpts(color="transparent")
-                showLegendSymbol=False
-            )
-            .render(path=save_path + file_name)
-        )    
-
-        return render(request, file_name, {})
+        return render(request, self.file_name.format(file_name=country), {})
 
     def get_map_by_province(self, request, province):
         """获取省级展示图"""
-        file_name = ".".join([province, "html"])
-        save_path = "./dashboard/templates/"
-        if os.path.exists(save_path + file_name):
-            return render(request, file_name, {})
+        if os.path.exists(self.save_path + self.file_name.format(file_name=province)):
+            return render(request, self.file_name.format(file_name=province), {})
 
+        self.generate_province_map(province)
 
+        return render(request, self.file_name.format(file_name=province), {})
+
+    def generate_country_map(self, country):
+        """生成国级HTML文件"""
+        print("###{}###".format(country))
+        year_list = [i.year for i in Data.objects.distinct("year")]
+        time_line = Timeline()
+        for year in year_list:
+            per_list = Compute().compute_province_per(country, year)
+            d_map = (
+                Map()
+                .add(
+                    series_name="每上市公司平均招聘数量",
+                    maptype="china",
+                    data_pair=per_list,
+
+                    is_selected=True,
+                    is_roam=True,
+                    center=None,
+                    name_map=None,
+                    symbol=None,
+                    is_map_symbol_show=True,
+                    layout_center=None,
+                )
+                .set_global_opts(
+                    title_opts=opts.TitleOpts(
+                        title="全国各省级区域每上市公司平均招聘数量",
+                        pos_left='30%',
+                        pos_top='10'
+                    ),
+                    visualmap_opts=opts.VisualMapOpts(
+                        min_=0,
+                        max_=80,
+                        range_text=["High", "Low"],
+                        is_calculable=True,
+                        is_piecewise=False,
+                        # range_color=["white", "pink", "red"],
+                        range_color=["#E0E0E0", "#CE0000"],
+                    ),
+                    legend_opts=opts.LegendOpts(is_show=False),
+                )
+                .set_series_opts(
+                    label_opts=opts.LabelOpts(is_show=False),
+                    # itemstyle_opts=opts.ItemStyleOpts(color="transparent")
+                    showLegendSymbol=False
+                )
+            )
+            time_line.add(d_map, year)
+        time_line.add_schema(is_auto_play=False, play_interval=1000)
+        time_line.render(self.save_path + self.file_name.format(file_name=country))
+
+    def generate_province_map(self, province):
+        """生成省级HTML文件"""
+        print("###{}###".format(province))
         year_list = [i.year for i in Data.objects.distinct("year")]
         time_line = Timeline()
         for year in year_list:
@@ -203,9 +257,7 @@ class Logic(object):
             time_line.add(d_map, year)
 
         time_line.add_schema(is_auto_play=False, play_interval=1000)
-        time_line.render(save_path + file_name)
-
-        return render(request, file_name, {})
+        time_line.render(self.save_path + self.file_name.format(file_name=province))
 
     def load_data(self, request):
         """暂用：导入数据"""
