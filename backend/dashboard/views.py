@@ -13,45 +13,47 @@ from django_apscheduler.jobstores import DjangoJobStore, register_events, regist
 
 from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED
 
-# 实例化调度器
-scheduler = BackgroundScheduler(timezone='Asia/Shanghai')
-# 调度器使用DjangoJobStore()
-scheduler.add_jobstore(DjangoJobStore(), "default")
+# # 实例化调度器
+# scheduler = BackgroundScheduler(timezone='Asia/Shanghai')
+# # 调度器使用DjangoJobStore()
+# scheduler.add_jobstore(DjangoJobStore(), "default")
 
-@register_job(scheduler, "interval", seconds=180, args=[''], id='job_generate_country_map', replace_existing=True)
-def job_generate_country_map(param):
-    """任务：生成国级HTML文件"""
-    print("Begin: job_generate_country_map")
-    Logic().generate_country_map("中国")
-    print("End: job_generate_country_map")
+# @register_job(scheduler, "interval", seconds=600, args=[''], id='job_generate_country_map', replace_existing=True)
+# def job_generate_country_map(param):
+#     """任务: 生成国级HTML文件"""
+#     print("Begin: job_generate_country_map")
+#     Logic().generate_country_map("中国")
+#     print("End: job_generate_country_map")
 
-@register_job(scheduler, "interval", seconds=180, args=[''], id='job_generate_province_map', replace_existing=True)
-def job_generate_province_map(param):
-    """任务：生成省级HTML文件"""
-    print("Begin: job_generate_province_map")
-    res_data = ProvinceCityMap.objects.all().distinct("province")
-    province_list = [i.province for i in res_data]
+# @register_job(scheduler, "interval", seconds=600, args=[''], id='job_generate_province_map', replace_existing=True)
+# def job_generate_province_map(param):
+#     """任务: 生成省级HTML文件"""
+#     print("Begin: job_generate_province_map")
+#     res_data = ProvinceCityMap.objects.all().distinct("province")
+#     province_list = [i.province for i in res_data]
     
-    # 构建线程池，批处理任务
-    pool = ThreadPoolExecutor(max_workers=10)
-    all_task=[pool.submit(Logic().generate_province_map, (i)) for i in province_list]
-    wait(all_task, return_when=ALL_COMPLETED)
-    pool.shutdown()
-    print("End: job_generate_province_map")
+#     # 构建线程池，批处理任务
+#     pool = ThreadPoolExecutor(max_workers=10)
+#     all_task=[pool.submit(Logic().generate_province_map, (i)) for i in province_list]
+#     wait(all_task, return_when=ALL_COMPLETED)
+#     pool.shutdown()
+#     print("End: job_generate_province_map")
 
-register_events(scheduler)
-scheduler.start()
+# register_events(scheduler)
+# scheduler.start()
 
 
 class Compute(object):
     def compute_province_per(self, country, year):
         """计算国级平均招聘量"""
         data_list = ProvinceCityMap.objects.all().distinct("province")
-        per_list = list()
+        per_list = [["", 0]]
         for data in data_list:
             province = data.province
             pos_count = Data.objects.filter(year=year).filter(work_province=province).count()
             employer_count = Data.objects.filter(year=year).filter(work_province=province).distinct("employer").count()
+            if not pos_count or not employer_count:
+                return per_list
             per = round(pos_count / employer_count, 1)
             per_list.append([province, per])
         return per_list
@@ -64,6 +66,8 @@ class Compute(object):
             city = data.city
             pos_count = Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).count()
             employer_count = Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).distinct("employer").count()
+            if not pos_count or not employer_count:
+                return per_list
             per = round(pos_count / employer_count, 1)
             per_list.append([city, per])
         return per_list
@@ -160,7 +164,7 @@ class Logic(object):
         print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
-            print("### Year: {} ###".format(year_list))
+            print("### Year: {} ###".format(year))
             per_list = Compute().compute_province_per(country, year)
             d_map = (
                 Map()
@@ -263,7 +267,7 @@ class Logic(object):
         time_line.add_schema(is_auto_play=False, play_interval=1000)
         time_line.render(self.save_path + self.file_name.format(file_name=province))
 
-    def load_data(self, request):
+    def tool_load_data(self, request):
         """暂用：导入数据"""
         import psycopg2
         import psycopg2.extras
@@ -376,3 +380,30 @@ class Logic(object):
         conn.close()
 
         return HttpResponse("Finish")
+
+    def tool_generate_country_map(self, request):
+        """任务: 生成国级HTML文件"""
+        print("Begin: job_generate_country_map")
+        self.generate_country_map("中国")
+        print("End: job_generate_country_map")
+
+        return JsonResponse({
+            "data": "OK"
+        })
+
+    def tool_generate_province_map(self, request):
+        """任务: 生成省级HTML文件"""
+        print("Begin: job_generate_province_map")
+        res_data = ProvinceCityMap.objects.all().distinct("province")
+        province_list = [i.province for i in res_data]
+        
+        # 构建线程池，批处理任务
+        pool = ThreadPoolExecutor(max_workers=10)
+        all_task=[pool.submit(self.generate_province_map, (i)) for i in province_list]
+        wait(all_task, return_when=ALL_COMPLETED)
+        pool.shutdown()
+        print("End: job_generate_province_map")
+
+        return JsonResponse({
+            "data": "OK"
+        })

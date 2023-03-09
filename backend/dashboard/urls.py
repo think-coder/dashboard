@@ -22,5 +22,9 @@ urlpatterns = [
     # 获取省份HTML图
     path('get_map_by_province/<str:province>', views.Logic().get_map_by_province, name='get_map_by_province'),
     # 导入数据
-    path('load_data', views.Logic().load_data, name='load_data'),
+    path('load_data', views.Logic().tool_load_data, name='load_data'),
+    # 生成国级HTML文件
+    path('tool_generate_country_map', views.Logic().tool_generate_country_map, name='tool_generate_country_map'),
+    # 生成省级HTML文件
+    path('tool_generate_province_map', views.Logic().tool_generate_province_map, name='tool_generate_province_map'),
 ]
