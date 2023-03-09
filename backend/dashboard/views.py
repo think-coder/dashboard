@@ -155,10 +155,12 @@ class Logic(object):
 
     def generate_country_map(self, country):
         """生成国级HTML文件"""
-        print("###{}###".format(country))
-        year_list = [i.year for i in Data.objects.distinct("year")]
+        print("### Country: {} ###".format(country))
+        year_list = [i.year for i in Data.objects.all().distinct("year")]
+        print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
+            print("### Year: {} ###".format(year_list))
             per_list = Compute().compute_province_per(country, year)
             d_map = (
                 Map()
@@ -204,10 +206,12 @@ class Logic(object):
 
     def generate_province_map(self, province):
         """生成省级HTML文件"""
-        print("###{}###".format(province))
-        year_list = [i.year for i in Data.objects.distinct("year")]
+        print("### Province: {}###".format(province))
+        year_list = [i.year for i in Data.objects.all().distinct("year")]
+        print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
+            print("### Year: {} ###".format(year))
             per_list = Compute().compute_city_per(province, year)
             data_maptype = ProvinceMaptype.objects.filter(province=province)
             maptype = str()

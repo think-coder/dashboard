@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
     # 检索雇主是否存在
-    path('get_employer/<str:employer>/', views.Logic().get_employer, name='get_employer'),
+    path('get_employer/<str:employer>', views.Logic().get_employer, name='get_employer'),
     # 获取雇主总数量
-    path('get_total_employer/', views.Logic().get_total_employer, name='get_total_employer'),
+    path('get_total_employer', views.Logic().get_total_employer, name='get_total_employer'),
     # 获取雇主[区间]
     path('get_employer_by_limit/<int:page>/<int:num>', views.Logic().get_employer_by_limit, name='get_employer_by_limit'),
     # 获取某雇主下，全部招聘信息的数量
