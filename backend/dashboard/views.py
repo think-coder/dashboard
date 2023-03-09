@@ -115,7 +115,25 @@ class Logic(object):
     def get_employer_data_by_limit(self, request, employer, page, num):
         """获取雇主的区间数据"""
         data = Data.objects.filter(employer=employer)[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
-        employer_list = [i.employer for i in data]
+        employer_list = list()
+        for i in data:
+            employer_list.append({
+                "股票代码": i.ticker,
+                "雇主名称": i.employer,
+                "职位名称": i.title,
+                "薪资范围": i.salary_range,
+                "年薪下限": i.a_sala_range_start,
+                "年薪上限": i.a_sala_range_end,
+                "工作经验要求": i.work_experience,
+                "工作地点": i.work_location,
+                "学历要求": i.edu_require,
+                "发布日期": i.publish_date,
+                "语言要求": i.lang_require,
+                "年龄要求": i.age_require,
+                "雇主所在行业": i.industry,
+                "职责描述": i.pos_require,
+                "任职要求": i.pos_require
+            })
 
         return JsonResponse({
             "data": employer_list
@@ -396,6 +414,7 @@ class Logic(object):
         print("Begin: job_generate_province_map")
         res_data = ProvinceCityMap.objects.all().distinct("province")
         province_list = [i.province for i in res_data]
+        print(len(province_list), province_list)
         
         # 构建线程池，批处理任务
         pool = ThreadPoolExecutor(max_workers=10)
