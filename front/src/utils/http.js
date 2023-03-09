@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const request = axios.create({
-  baseURL: 'http://106.52.123.19:8000',
-  timeout: 8000,
+  baseURL: 'http://106.52.123.19:58000',
+  timeout: 50000,
   // retry:2,
   // retryDelay:1000
 })
