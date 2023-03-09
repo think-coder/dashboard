@@ -1,5 +1,7 @@
+APScheduler==3.10.1
 asgiref==3.6.0
 Django==4.0
+django-apscheduler==0.6.2
 django-cors-headers==3.14.0
 echarts-china-cities-pypkg==0.0.9
 echarts-china-counties-pypkg==0.0.2
@@ -15,6 +17,11 @@ prettytable==3.6.0
 psycopg2==2.9.5
 pyecharts==2.0.2
 pyecharts-jupyter-installer==0.0.3
+pytz==2022.7.1
+pytz-deprecation-shim==0.1.0.post0
 simplejson==3.18.3
+six==1.16.0
 sqlparse==0.4.3
+tzdata==2022.7
+tzlocal==4.2
 wcwidth==0.2.6
