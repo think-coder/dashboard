@@ -1,33 +1,24 @@
 <template>
-  <div id='htmlData'></div>
-  <!-- <iframe :src="htmlData"></iframe> -->
+  <iframe
+   name="iframeMap"
+   id="iframeMapViewComponent"
+   width="100%"
+   height="470px"
+   :src="`http://106.52.123.19:58000/dashboard/get_map_by_country/${data}`"
+   frameborder="0"
+   scrolling="no"
+   ref="iframeDom"
+  ></iframe>
 </template>
 <script>
 export default {
-props: {},
+props: ["data"],
   data() {
     return {
-      htmlData: "",
+      mounted(){
+        console.log(this.data, 'data')
+      }
     }
-  },
-  mounted() {
-    this.load();
-    
-  },
-  methods: {
-    
-    load() {
-        let param = {accept: "text/html, text/plain"};
-        this.$http.get('/dashboard/get_map_by_country/china', param).then(res => { 
-          // const htmlData = document.getElementById('htmlData')
-          document.write(res);
-          document.close();
-
-          // this.htmlData = res
-          
-          // this._nexttick()
-        })
-    },
   }
 };
 </script>
