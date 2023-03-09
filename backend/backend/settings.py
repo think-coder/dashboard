@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_apscheduler',
     "dashboard.apps.DashboardConfig",
     "corsheaders",  # 设置跨域
 ]

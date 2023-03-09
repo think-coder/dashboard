@@ -33,3 +33,10 @@ class ProvinceCityMap(models.Model):
 
     class Meta:
         db_table = "province_city_map"
+
+class ProvinceMaptype(models.Model):
+    province = models.CharField(max_length=256)
+    maptype = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "province_maptype"

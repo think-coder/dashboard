@@ -16,7 +16,7 @@ def main():
         user='postgres',
         password='postgres',
         host='127.0.0.1',
-        port='5432',
+        port='15432',
     )
     cur_a = conn_a.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur_b = conn_b.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
