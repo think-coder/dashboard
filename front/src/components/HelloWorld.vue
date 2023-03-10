@@ -8,14 +8,34 @@
           </el-input>
           <refresh-list @on-bottom="onBotttom">
             <div v-for="(item, index) in leftPageData" :key="index" class="item-con">
-              <div class="item">{{item}}</div>
+              <div :class="[curLeftData === item ? 'item checked': 'item']" @click="getCheckedData(item)">{{item}}</div>
             </div>
           </refresh-list>
         </div>
-        <div class="index-content">
-          <el-table :data="tableHeader" style="width: 100%">
-            <el-table-column prop="date1" label="日期" width="180"></el-table-column>
-          </el-table>
+        <div>
+          <div class="index-content">
+            <el-table :data="rightPageData" style="width: 100%;height:800px;overflow:scroll">
+              <el-table-column v-for="(item, index) in tableHeader" :key="index" :prop="item.prop" :label="item.label" width="180"></el-table-column>
+              <el-table-column
+                fixed="right"
+                label="操作"
+                width="160">
+                    <template slot-scope="scope">
+                      <el-button slot="reference" type="text" size="small" @click="handleClickZzDetail(scope.row)">职责范围</el-button>
+                      <el-button slot="reference" type="text" size="small" @click="handleClickRzDetail(scope.row)">任职要求</el-button>
+                    </template>
+            </el-table-column>
+            </el-table>
+            
+          </div>
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="rightPageNum"
+            :page-size="rightPageLimt"
+            layout="total, prev, pager, next, jumper"
+            :total="rightTotal"
+            style="margin-top: 20px">
+          </el-pagination>
         </div>
       </div>
     </el-tab-pane>
@@ -48,25 +68,59 @@ import RefreshList from "./RefreshList.vue";
         tabPosition: 'left',
         allProvince:[],
         province:'上海市',
-        tableHeader:[{
-          prop:"date1",
-          label:" 股票代码"
-        },{
-          prop:"date2",
-          label:"日期"
-        }],
-        tableData: [{
-           date:1
-        },{
-           date:2
-        }],
         loading: false,
         searchData: '',
         searchLoading: false,
         leftPageData:[],
         leftTotal:0,
         leftPageNum: 1,
-        leftPageLimt: 50
+        leftPageLimt: 50,
+        curLeftData:'',
+        rightPageData:[],
+        rightTotal:0,
+        rightPageNum: 1,
+        rightPageLimt: 15,
+        tableHeader:[{
+          prop:"股票代码",
+          label:"股票代码"
+        },{
+          prop:"雇主名称",
+          label:"雇主名称"
+        },{
+          prop:"职位名称",
+          label:"职位名称"
+        },{
+          prop:"薪资范围",
+          label:"薪资范围"
+        },{
+          prop:"年薪下限",
+          label:"年薪下限"
+        },{
+          prop:"年薪上限",
+          label:"年薪上限"
+        },{
+          prop:"工作经验要求",
+          label:"工作经验要求"
+        },{
+          prop:"工作地点",
+          label:"工作地点"
+        },{
+          prop:"学历要求",
+          label:"学历要求"
+        },{
+          prop:"发布日期",
+          label:"发布日期"
+        },{
+          prop:"语言要求",
+          label:"语言要求"
+        },{
+          prop:"年龄要求",
+          label:"年龄要求"
+        },{
+          prop:"雇主所在行业",
+          label:"雇主所在行业"
+        }],
+        visible: false
       };
     },
     computed: {
@@ -78,33 +132,29 @@ import RefreshList from "./RefreshList.vue";
       'searchData'(newval) {
         if(newval==''){
           this.searchLoading = false
-          this.indexLeftData(1,this.leftPageLimt)
+          this.leftPageNum = 1
+          this.indexLeftData(this.leftPageNum,this.leftPageLimt)
         }
       },
     },
     created(){
-      // this.getIndexData()  
       this.indexLeftData(this.leftPageNum, this.leftPageLimt)                            
     },
     mounted(){
       this.getAllProvince()
     },
     methods: {
-      getIndexData(){
-        this.$http.get('/dashboard/get_total_employer').then(res=>{
-          console.log(res,'res')
-        }).catch(()=>{
-          alert('接口错误！')
-        })
-      },
       handleClick(tab, event) {
         console.log(tab, event);
       },
       // 首页左侧数据
       indexLeftData(num,limt){
         this.$http.get(`/dashboard/get_employer_by_limit/${num}/${limt}`).then(res=>{
-          console.log(res.data,'首页左侧数据')
           this.leftPageData = this.leftPageData.concat(res.data)
+          if(num == 1){
+            this.curLeftData = res.data[0]
+            this.getRightData(this.curLeftData, this.rightPageNum, this.rightPageLimt)
+          }
           this.leftTotal = res.total
         }).catch(()=>{
           alert('接口错误！')
@@ -112,10 +162,9 @@ import RefreshList from "./RefreshList.vue";
       },
       // 左侧搜索
       getSearchData(){
-        if(this.searchData){
+        if(this.searchData !== ''){
           this.searchLoading = true
           this.$http.get(`/dashboard/get_employer/${this.searchData}`).then(res=>{
-            console.log(res,'首页左侧数据')
             this.leftPageData = res
             this.leftTotal = res.total
             this.searchLoading = false
@@ -126,25 +175,47 @@ import RefreshList from "./RefreshList.vue";
         } else {
           this.indexLeftData(1,this.leftPageLimt)
         }
-        
+      },
+      // 左侧选中
+      getCheckedData(item){
+        this.curLeftData = item
+        this.rightPageNum = 1
+        this.rightPageLimt = 50
+        this.getRightData(item,this.rightPageNum,this.rightPageLimt)
       },
       // 左侧加载
       onBotttom() {
         this.leftPageNum = this.leftPageNum + 1
-        console.log("触底加载...");
         this.indexLeftData(this.leftPageNum, this.leftPageLimt)
       },
-      // load () {
-      //   this.loading = true
-      //   setTimeout(() => {
-      //     this.leftPageLimt += 50
-      //     this.loading = false
-      //   }, 2000)
-      // },
+      // 首页右侧数据
+      getRightData(_curLeftData,_rightPageNum,_rightPageLimt){
+        this.$http.get(`/dashboard/get_employer_data_by_limit/${_curLeftData}/${_rightPageNum}/${_rightPageLimt}`).then(res=>{
+          this.rightPageData= res.data
+          this.rightTotal = res.total
+        }).catch(()=>{
+          alert('接口错误！')
+          this.searchLoading = false
+        })
+      },
+      // 右侧分页
+      handleCurrentChange(val) {
+        this.getRightData(this.curLeftData, val, this.rightPageLimt)
+      },
+      // 右侧查看详情
+      handleClickZzDetail(row) {
+        this.$alert(row.pos_require, '职责范围', {
+          confirmButtonText: '确定',
+        });
+        console.log(row);
+      },
+      handleClickRzDetail(row) {
+        this.$alert(row.pos_text, '任职要求', {
+        });
+      },
       // 获取全国省份
       getAllProvince(){
         this.$http.get('/dashboard/get_all_province').then(res=>{
-          console.log(res.data,'获取全国省份')
           this.allProvince = res.data
           this.province = res.data[0]
         }).catch(()=>{
@@ -152,21 +223,8 @@ import RefreshList from "./RefreshList.vue";
         })
       },
       handleProviceMap(e){
-        console.log(e.name, 'handleProviceMap')
         this.province = e.name
       },
-      // 获取省份对应地图
-      // getProvinceMap(name){
-      //   this.$http.get(`/dashboard/get_map_by_province/${name}`).then(res=>{
-      //     // console.log(res,'省份对应地图')
-      //     // document.write(res);
-      //     // document.close();
-      //     // this.allProvince = res.data
-      //     // console.log(this.allProvince, 'this.allProvince')
-      //   }).catch(()=>{
-      //     alert('接口错误！')
-      //   })
-      // },
       
     }
   };
@@ -201,6 +259,7 @@ import RefreshList from "./RefreshList.vue";
     height:850px;
     padding: 20px;
     box-sizing: border-box;
+    flex-shrink: 0;
   }
 
   .item-con{
@@ -219,7 +278,11 @@ import RefreshList from "./RefreshList.vue";
     color:#409EFF;
     cursor:pointer;
   }
+  .checked{
+    color:#409EFF!important;
+  }
   .index-content{
+    width: 1300px;
     padding: 0 20px;
     box-sizing: border-box;
   }
