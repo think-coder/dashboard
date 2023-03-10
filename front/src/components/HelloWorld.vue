@@ -1,4 +1,5 @@
 <template>
+<div class="container">
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="首页" name="1">
       <div class="index-wrap">
@@ -14,7 +15,7 @@
         </div>
         <div>
           <div class="index-content">
-            <el-table :data="rightPageData" style="width: 100%;height:800px;overflow:scroll">
+            <el-table :data="rightPageData" style="width: 100%;overflow:scroll">
               <el-table-column v-for="(item, index) in tableHeader" :key="index" :prop="item.prop" :label="item.label" width="180"></el-table-column>
               <el-table-column
                 fixed="right"
@@ -34,7 +35,8 @@
             :page-size="rightPageLimt"
             layout="total, prev, pager, next, jumper"
             :total="rightTotal"
-            style="margin-top: 20px">
+            background
+            class="pagination-comp">
           </el-pagination>
         </div>
       </div>
@@ -53,6 +55,7 @@
     <el-tab-pane label="增长最快" name="6">增长最快</el-tab-pane>
     <el-tab-pane label="下降最快" name="7">下降最快</el-tab-pane>
   </el-tabs>
+</div>
 </template>
 <script>
 import HtmlPanel from "./HtmlPanel.vue"; //根据实际路径导入
@@ -230,6 +233,10 @@ import RefreshList from "./RefreshList.vue";
   };
 </script>
 <style>
+  .container{
+    width: 100%;
+    height: 100vh;
+  }
   .el-dropdown-link {
     cursor: pointer;
     color: #409EFF;
@@ -255,8 +262,8 @@ import RefreshList from "./RefreshList.vue";
     background: #fff;
     display: inline-block;
     vertical-align: middle;
-    width:300px;
-    height:850px;
+    width:16%;
+    height:990px;
     padding: 20px;
     box-sizing: border-box;
     flex-shrink: 0;
@@ -282,9 +289,15 @@ import RefreshList from "./RefreshList.vue";
     color:#409EFF!important;
   }
   .index-content{
-    width: 1300px;
+    width: 1600px;
+    height: 90%;
     padding: 0 20px;
     box-sizing: border-box;
+  }
+  .pagination-comp{
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
   }
   .el-select .el-input {
     width: 130px;
