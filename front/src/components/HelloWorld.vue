@@ -3,6 +3,9 @@
     <el-tab-pane label="首页" name="1">
       <div class="index-wrap">
         <div class="refresh-list-con">
+          <el-input placeholder="请输入内容" v-model="searchData" clearable class="input-with-select" style="margin-bottom: 20px;">
+            <el-button slot="append" icon="el-icon-search" :disabled="searchData == ''? true : false"  @click="getSearchData" :loading="searchLoading"></el-button>
+          </el-input>
           <refresh-list @on-bottom="onBotttom">
             <div v-for="(item, index) in leftPageData" :key="index" class="item-con">
               <div class="item">{{item}}</div>
@@ -58,6 +61,8 @@ import RefreshList from "./RefreshList.vue";
            date:2
         }],
         loading: false,
+        searchData: '',
+        searchLoading: false,
         leftPageData:[],
         leftTotal:0,
         leftPageNum: 1,
@@ -67,6 +72,14 @@ import RefreshList from "./RefreshList.vue";
     computed: {
       noMore () {
         return this.leftPageLimt >= this.leftTotal
+      },
+    },
+    watch:{
+      'searchData'(newval) {
+        if(newval==''){
+          this.searchLoading = false
+          this.indexLeftData(1,this.leftPageLimt)
+        }
       },
     },
     created(){
@@ -96,6 +109,24 @@ import RefreshList from "./RefreshList.vue";
         }).catch(()=>{
           alert('接口错误！')
         })
+      },
+      // 左侧搜索
+      getSearchData(){
+        if(this.searchData){
+          this.searchLoading = true
+          this.$http.get(`/dashboard/get_employer/${this.searchData}`).then(res=>{
+            console.log(res,'首页左侧数据')
+            this.leftPageData = res
+            this.leftTotal = res.total
+            this.searchLoading = false
+          }).catch(()=>{
+            alert('接口错误！')
+            this.searchLoading = false
+          })
+        } else {
+          this.indexLeftData(1,this.leftPageLimt)
+        }
+        
       },
       // 左侧加载
       onBotttom() {
@@ -160,23 +191,42 @@ import RefreshList from "./RefreshList.vue";
     display: flex;
   }
   .refresh-list-con {
-    width: 300px;
-    height: 800px;
-    border: 1px solid #ccc;
-    overflow-y: auto;
+    border: 1px solid #EBEEF5;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    width:300px;
+    height:850px;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
+  .item-con{
+    width: 254px;
+  }
   .item-con .item {
-    width: 300px;
-    height: 50px;
-    background: #f5f5f5;
+    width: 254px;
+    height: 30px;
     margin-bottom: 10px;
-    line-height: 50px;
-    padding-left: 20px;
-    box-sizing: border-box;
+    line-height: 30px;
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+  }
+  .item-con .item:hover{
+    color:#409EFF;
+    cursor:pointer;
   }
   .index-content{
     padding: 0 20px;
     box-sizing: border-box;
+  }
+  .el-select .el-input {
+    width: 130px;
+  }
+  .input-with-select .el-input-group__prepend {
+    background-color: #fff;
   }
 </style>
