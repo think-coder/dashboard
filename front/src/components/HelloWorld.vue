@@ -15,7 +15,7 @@
     <el-tab-pane label="省级招聘数据" name="3" >
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleProviceMap">
         <el-tab-pane v-for="(item, index) in allProvince" :label="item" :key="index" :name="item">
-          <div v-if="activeName==3"><HtmlPanel :data="province" /></div>
+          <div v-if="activeName==3 && item==province"><HtmlPanel :data="province" /></div>
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
