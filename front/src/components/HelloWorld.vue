@@ -1,13 +1,20 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="首页" name="1">
-        <el-tabs :tab-position="tabPosition" class="el-tabs-box-1">
-          <el-tab-pane v-for="(item, index) in leftPageData" :key="index" :label="item">
-            <el-table :data="tableHeader" style="width: 100%">
-              <el-table-column prop="date1" label="日期" width="180"></el-table-column>
-            </el-table>
-          </el-tab-pane>
-        </el-tabs>
+    <el-tab-pane label="首页" name="1">
+      <div class="index-wrap">
+        <div class="refresh-list-con">
+          <refresh-list @on-bottom="onBotttom">
+            <div v-for="(item, index) in leftPageData" :key="index" class="item-con">
+              <div class="item">{{item}}</div>
+            </div>
+          </refresh-list>
+        </div>
+        <div class="index-content">
+          <el-table :data="tableHeader" style="width: 100%">
+            <el-table-column prop="date1" label="日期" width="180"></el-table-column>
+          </el-table>
+        </div>
+      </div>
     </el-tab-pane>
     <el-tab-pane label="全国招聘数据" name="2">
       <div v-if="activeName==2"><HtmlPanel data="中国" /></div>
@@ -26,8 +33,12 @@
 </template>
 <script>
 import HtmlPanel from "./HtmlPanel.vue"; //根据实际路径导入
+import RefreshList from "./RefreshList.vue";
   export default {
-    components:{HtmlPanel},
+    components:{
+      HtmlPanel,
+      RefreshList
+    },
     data() {
       return {
         activeName: '1',
@@ -46,14 +57,21 @@ import HtmlPanel from "./HtmlPanel.vue"; //根据实际路径导入
         },{
            date:2
         }],
+        loading: false,
         leftPageData:[],
+        leftTotal:0,
         leftPageNum: 1,
         leftPageLimt: 50
       };
     },
+    computed: {
+      noMore () {
+        return this.leftPageLimt >= this.leftTotal
+      },
+    },
     created(){
       // this.getIndexData()  
-      this.indexLeftData()                            
+      this.indexLeftData(this.leftPageNum, this.leftPageLimt)                            
     },
     mounted(){
       this.getAllProvince()
@@ -70,14 +88,28 @@ import HtmlPanel from "./HtmlPanel.vue"; //根据实际路径导入
         console.log(tab, event);
       },
       // 首页左侧数据
-      indexLeftData(){
-        this.$http.get(`/dashboard/get_employer_by_limit/${this.leftPageNum}/${this.leftPageLimt}`).then(res=>{
+      indexLeftData(num,limt){
+        this.$http.get(`/dashboard/get_employer_by_limit/${num}/${limt}`).then(res=>{
           console.log(res.data,'首页左侧数据')
-          this.leftPageData = res.data
+          this.leftPageData = this.leftPageData.concat(res.data)
+          this.leftTotal = res.total
         }).catch(()=>{
           alert('接口错误！')
         })
       },
+      // 左侧加载
+      onBotttom() {
+        this.leftPageNum = this.leftPageNum + 1
+        console.log("触底加载...");
+        this.indexLeftData(this.leftPageNum, this.leftPageLimt)
+      },
+      // load () {
+      //   this.loading = true
+      //   setTimeout(() => {
+      //     this.leftPageLimt += 50
+      //     this.loading = false
+      //   }, 2000)
+      // },
       // 获取全国省份
       getAllProvince(){
         this.$http.get('/dashboard/get_all_province').then(res=>{
@@ -122,5 +154,29 @@ import HtmlPanel from "./HtmlPanel.vue"; //根据实际路径导入
   }
   .el-tabs-box{
     height:800px;
+  }
+  .index-wrap{
+    width: 100%;
+    display: flex;
+  }
+  .refresh-list-con {
+    width: 300px;
+    height: 800px;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+  }
+
+  .item-con .item {
+    width: 300px;
+    height: 50px;
+    background: #f5f5f5;
+    margin-bottom: 10px;
+    line-height: 50px;
+    padding-left: 20px;
+    box-sizing: border-box;
+  }
+  .index-content{
+    padding: 0 20px;
+    box-sizing: border-box;
   }
 </style>
