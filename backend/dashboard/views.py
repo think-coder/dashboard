@@ -97,10 +97,119 @@ class Logic(object):
 
     def get_employer_by_limit(self, request, page, num):
         """获取区间雇主列表"""
-        data = Data.objects.all().distinct("employer")[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
-        employer_list = [i.employer for i in data]
+        # data_total = Data.objects.all().distinct("employer").count()
+        # data_employer = Data.objects.all().distinct("employer")[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
+        # employer_list = [i.employer for i in data_employer]
 
+        # return JsonResponse({
+        #     "total": data_total,
+        #     "data": employer_list
+        # })
+
+        # 测试：暂时使用
+        employer_list = [
+            "GQY视讯",
+            "GQY视讯股份有限公司",
+            "TCL华星光电技术有限公司",
+            "TCL华瑞照明科技(惠州)有限公司",
+            "TCL华瑞照明科技（惠州）有限公司",
+            "TCL商用信息科技(惠州)股份有限公司",
+            "TCL奥博(天津)环保发展有限公司",
+            "TCL家用电器(中山)有限公司",
+            "TCL家用电器（中山）有限公司",
+            "TCL家用电器(合肥)有限公司",
+            "TCL德龙家用电器(中山)有限公司",
+            "TCL德龙家用电器（中山）有限公司",
+            "TCL数码科技",
+            "TCL显示科技(惠州)",
+            "TCL智慧工业(惠州)有限公司",
+            "TCL海外电子(惠州)有限公司",
+            "TCL王牌电器(惠州)有限公司",
+            "TCL王牌电器(成都)有限公司",
+            "TCL王牌电器（成都）有限公司",
+            "TCL王牌电器（无锡）有限公司",
+            "TCL瑞智（惠州）制冷设备有限公司",
+            "TCL电子",
+            "TCL电子控股有限公司",
+            "TCL科技产业园有限公司",
+            "TCL科技集团股份有限公司",
+            "TCL空调器（中山）有限公司",
+            "TCL空调器（武汉）有限公司",
+            "TCL通力电子",
+            "TCL通力电子(惠州)有限公司",
+            "TCL通讯",
+            "TCL通讯（宁波）有限公司",
+            "TCL通讯科技",
+            "TCL金融",
+            "TCL金融控股集团",
+            "TCL金融控股集团（广州）有限公司",
+            "TCL集团",
+            "TCL集团工业研究院",
+            "TCL集团财务有限公司",
+            "TSC集团控股有限公司",
+            "一号车市控股有限公司",
+            "一品红",
+            "一品红药业",
+            "一品红药业股份有限公司",
+            "一心堂",
+            "一心堂药业集团股份有限公司",
+            "一拖国际经济贸易有限公司",
+            "一拖（洛阳）柴油机有限公司",
+            "一拖(洛阳)福莱格车身有限公司",
+            "一汽东机工减振器有限公司",
+            "一汽光洋转向装置有限公司",
+            "一汽奔腾轿车有限公司",
+            "一汽富维",
+            "一汽富维本特勒汽车零部件(天津)有限公司",
+            "一汽富维本特勒汽车零部件（天津）有限公司",
+            "一汽海马汽车有限公司",
+            "一汽财务有限公司",
+            "一汽轿车",
+            "一汽轿车股份有限公司",
+            "一石巨鑫有限公司",
+            "一联易招科技（上海）有限公司",
+            "一起住好房(北京)网络科技有限公司",
+            "一起住好房（北京）网络科技有限公司",
+            "一重集团大连工程建设有限公司",
+            "一重集团天津重工有限公司",
+            "一重集团常州华冶轧辊有限公司",
+            "七一二",
+            "七天四季酒店（广州）有限公司",
+            "七彩化学股份有限公司",
+            "万东医疗",
+            "万丰镁瑞丁新材料科技有限公司",
+            "万兴科技",
+            "万兴科技股份有限公司",
+            "万兴科技集团股份有限公司",
+            "万华化学",
+            "万华化学(北京)有限公司",
+            "万华化学(宁波)容威聚氨酯有限公司",
+            "万华化学(宁波)有限公司",
+            "万华化学(宁波)氯碱有限公司",
+            "万华化学(福建)有限公司",
+            "万华化学集团股份有限公司",
+            "万华集团",
+            "万向电动汽车有限公司",
+            "万向财务有限公司",
+            "万向通达股份公司",
+            "万向钱潮",
+            "万向钱潮(上海)汽车系统有限公司",
+            "万向钱潮（上海）汽车系统有限公司",
+            "万向钱潮传动轴有限公司",
+            "万向钱潮汽车系统",
+            "万向钱潮股份有限公司",
+            "万向钱潮股份有限公司等速驱动轴厂",
+            "万向钱潮重庆汽车部件有限公司",
+            "万孚（吉林）生物技术有限公司",
+            "万宁日用品商业（上海）有限公司",
+            "万宁连锁商业（北京）有限公司",
+            "万宁（重庆）健康产品有限公司",
+            "万安科技",
+            "万安集团",
+            "万安集团有限公司",
+            "万家基金"]
         return JsonResponse({
+            "total": 10000,
             "data": employer_list
         })
 
@@ -114,9 +223,10 @@ class Logic(object):
 
     def get_employer_data_by_limit(self, request, employer, page, num):
         """获取雇主的区间数据"""
-        data = Data.objects.filter(employer=employer)[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
+        data_total = Data.objects.filter(employer=employer).count()
+        data_employer = Data.objects.filter(employer=employer)[int(page)*(int(num)-1):int(page)*int(num)+int(num)]
         employer_list = list()
-        for i in data:
+        for i in data_employer:
             employer_list.append({
                 "股票代码": i.ticker,
                 "雇主名称": i.employer,
@@ -136,6 +246,7 @@ class Logic(object):
             })
 
         return JsonResponse({
+            "total": data_total,
             "data": employer_list
         })
 
