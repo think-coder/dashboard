@@ -1,6 +1,6 @@
 import os
 import pyecharts.options as opts
-from pyecharts.charts import Map, Timeline
+from pyecharts.charts import Map, Bar, Timeline
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from .models import Data, ProvinceCityMap, ProvinceMaptype
@@ -71,6 +71,16 @@ class Compute(object):
             per = round(pos_count / employer_count, 1)
             per_list.append([city, per])
         return per_list
+
+    def compute_rise_per(self, title):
+        """计算增长率"""
+        left_point = Data.objects.filter(year='2017').filter(title=title).count()
+        right_point = Data.objects.filter(year='2021').filter(title=title).count()
+        if not left_point or not right_point:
+            per = round(right_point ** 1/4 - 1, 1)
+        else:
+            per = round((right_point / left_point) ** 1/4 - 1, 1)
+        return (per, title)
 
 
 class Logic(object):
@@ -286,6 +296,24 @@ class Logic(object):
 
         return render(request, self.file_name.format(file_name=province), {})
 
+    def get_map_of_top_city(self, request):
+        """获取一线/新一线HTML图"""
+        if os.path.exists(self.save_path + self.file_name.format(file_name="新一线")):
+            return render(request, self.file_name.format(file_name="新一线"), {})
+
+        self.generate_map_of_top_city()
+
+        return render(request, self.file_name.format(file_name="新一线"), {})
+
+    def get_map_of_top_rise(self, request):
+        """获取需求增加最快的15种岗位"""
+        if os.path.exists(self.save_path + self.file_name.format(file_name="增长最快")):
+            return render(request, self.file_name.format(file_name="增长最快"), {})
+
+        self.generate_map_of_top_rise()
+
+        return render(request, self.file_name.format(file_name="增长最快"), {})
+
     def generate_country_map(self, country):
         """生成国级HTML文件"""
         print("### Country: {} ###".format(country))
@@ -395,6 +423,101 @@ class Logic(object):
 
         time_line.add_schema(is_auto_play=False, play_interval=1000)
         time_line.render(self.save_path + self.file_name.format(file_name=province))
+
+    def generate_map_of_top_city(self):
+        """生成一线/新一线HTML文件"""
+        top_city_list = [
+            "北京市", "上海市", "广州市", "深圳市",
+            "成都市", "重庆市", "杭州市", "西安市", "武汉市",
+            "苏州市", "郑州市", "南京市", "天津市", "长沙市",
+            "东莞市", "宁波市", "佛山市", "合肥市", "青岛市"
+        ]
+        per_list = []
+        for city in top_city_list:
+            print(city)
+            pos_count = Data.objects.filter(work_location=city).count()
+            employer_count = Data.objects.filter(work_location=city).distinct("employer").count()
+            if not pos_count or not employer_count:
+                per_list.append(0)
+                continue
+            per_list.append(round(pos_count / employer_count, 1))
+        print("per_list: {}".format(per_list))
+
+        d_bar = (
+            Bar()
+            .add_xaxis(top_city_list)
+            .add_yaxis("每上市公司平均招聘量", per_list)
+            .set_global_opts(
+                title_opts=opts.TitleOpts(title="一线/新一线城市每上市公司平均招聘量", subtitle=""),
+                xaxis_opts=opts.AxisOpts(name="城市名称"),
+                yaxis_opts=opts.AxisOpts(name="每上市公司平均招聘量")
+            )
+            .render(self.save_path + self.file_name.format(file_name="新一线"))
+        )
+
+    def generate_map_of_top_rise(self):
+        """生成需求增加最快的15种岗位"""
+        title_list = [i.title for i in Data.objects.distinct("title")]
+        per_list = list()
+        map_dict = dict()
+        for i in title_list:
+            left_point = Data.objects.filter(year='2017').filter(title=i).count()
+            right_point = Data.objects.filter(year='2021').filter(title=i).count()
+            if not left_point or not right_point:
+                per = round(right_point ** 1/4 - 1, 1)
+            else:
+                per = round((right_point / left_point) ** 1/4 - 1, 1)
+
+            per_list.append(per)
+            map_dict[str(per)] = i
+
+        top_per_list = per_list.sort()[0:15]
+        t_list = [map_dict.get(str(per)) for per in top_per_list]
+        d_bar = (
+            Bar()
+            .add_xaxis(t_list)
+            .add_yaxis("每上市公司平均招聘量", top_per_list)
+            .set_global_opts(
+                title_opts=opts.TitleOpts(title="需求增加最快的15种岗位", subtitle=""),
+                xaxis_opts=opts.AxisOpts(name="职位"),
+                yaxis_opts=opts.AxisOpts(name="增长率")
+            )
+            .render(self.save_path + self.file_name.format(file_name="增长最快"))
+        )
+    
+    def generate_map_of_tail_reduce(self):
+        """生成需求下降最快的15种岗位"""
+        title_list = [i.title for i in Data.objects.distinct("title")]
+        per_list = list()
+        map_dict = dict()
+        for i in title_list:
+            left_point = Data.objects.filter(year='2017').filter(title=i).count()
+            right_point = Data.objects.filter(year='2021').filter(title=i).count()
+            if not left_point or not right_point:
+                per = round(right_point ** 1/4 - 1, 1)
+            else:
+                per = round((right_point / left_point) ** 1/4 - 1, 1)
+
+            per_list.append(per)
+            map_dict[str(per)] = i
+
+        top_per_list = per_list.sort()[-15:]
+        t_list = [map_dict.get(str(per)) for per in top_per_list]
+        d_bar = (
+            Bar()
+            .add_xaxis(t_list)
+            .add_yaxis("每上市公司平均招聘量", top_per_list)
+            .set_global_opts(
+                title_opts=opts.TitleOpts(title="需求下降最快的15种岗位", subtitle=""),
+                xaxis_opts=opts.AxisOpts(name="职位"),
+                yaxis_opts=opts.AxisOpts(name="增长率")
+            )
+            .render(self.save_path + self.file_name.format(file_name="增长最快"))
+        )
+        
+    def generate_map_of_tail_fall(self):
+        """生成需求下降最快的15种岗位"""
+        pass
 
     def tool_load_data(self, request):
         """暂用：导入数据"""
@@ -512,9 +635,9 @@ class Logic(object):
 
     def tool_generate_country_map(self, request):
         """任务: 生成国级HTML文件"""
-        print("Begin: job_generate_country_map")
+        print("Begin: tool_generate_country_map")
         self.generate_country_map("中国")
-        print("End: job_generate_country_map")
+        print("End: tool_generate_country_map")
 
         return JsonResponse({
             "data": "OK"
@@ -522,7 +645,7 @@ class Logic(object):
 
     def tool_generate_province_map(self, request):
         """任务: 生成省级HTML文件"""
-        print("Begin: job_generate_province_map")
+        print("Begin: tool_generate_province_map")
         res_data = ProvinceCityMap.objects.all().distinct("province")
         province_list = [i.province for i in res_data]
         print(len(province_list), province_list)
@@ -532,7 +655,64 @@ class Logic(object):
         all_task=[pool.submit(self.generate_province_map, (i)) for i in province_list]
         wait(all_task, return_when=ALL_COMPLETED)
         pool.shutdown()
-        print("End: job_generate_province_map")
+        print("End: tool_generate_province_map")
+
+        return JsonResponse({
+            "data": "OK"
+        })
+
+    def tool_generate_columnar_map(self, request):
+        """任务: 生成一线/新一线HTML文件"""
+        print("Begin: tool_generate_columnar_map")
+        self.generate_map_of_top_city()
+        print("End: tool_generate_columnar_map")
+
+        return 
+
+    def tool_generate_map_of_top_rise_reduce(self, request):
+        """任务: 生成需求增加/下降最快的15种岗位"""
+        _start = time.time()
+        print("Begin: tool_generate_map_of_top_rise_reduce")
+        title_list = [i.title for i in Data.objects.distinct("title")]
+        per_list = list()
+        map_dict = dict()
+
+        executor = ThreadPoolExecutor(max_workers=48)
+        for per, title in executor.map(Compute().compute_rise_per, title_list):
+            per_list.append(per)
+            map_dict[str(per)] = title
+            print(title, per)
+
+        per_list.sort()
+        top_per_list = per_list[0:15]
+        tail_per_list = per_list[-15:]
+        top_list = [map_dict.get(str(per)) for per in top_per_list]
+        tail_list = [map_dict.get(str(per)) for per in tail_per_list]
+        rise_bar = (
+            Bar()
+            .add_xaxis(top_list)
+            .add_yaxis("每上市公司平均招聘量", top_per_list)
+            .set_global_opts(
+                title_opts=opts.TitleOpts(title="需求增长最快的15种岗位", subtitle=""),
+                xaxis_opts=opts.AxisOpts(name="职位"),
+                yaxis_opts=opts.AxisOpts(name="增长率")
+            )
+            .render(self.save_path + self.file_name.format(file_name="增长最快"))
+        )
+        reduce_bar = (
+            Bar()
+            .add_xaxis(tail_list)
+            .add_yaxis("每上市公司平均招聘量", tail_per_list)
+            .set_global_opts(
+                title_opts=opts.TitleOpts(title="需求下降最快的15种岗位", subtitle=""),
+                xaxis_opts=opts.AxisOpts(name="职位"),
+                yaxis_opts=opts.AxisOpts(name="增长率")
+            )
+            .render(self.save_path + self.file_name.format(file_name="下降最快"))
+        )
+        _end = time.time()
+        print("End: tool_generate_map_of_top_rise_reduce")
+        print("Total: {}".format(_end - _start))
 
         return JsonResponse({
             "data": "OK"
