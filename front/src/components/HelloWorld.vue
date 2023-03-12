@@ -42,18 +42,24 @@
       </div>
     </el-tab-pane>
     <el-tab-pane label="全国招聘数据" name="2">
-      <div v-if="activeName==2"><HtmlPanel data="中国" /></div>
+      <div v-if="activeName==2"><HtmlPanel :mapSrc="mapSrc"/></div>
     </el-tab-pane>
     <el-tab-pane label="省级招聘数据" name="3" >
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleProviceMap">
         <el-tab-pane v-for="(item, index) in allProvince" :label="item" :key="index" :name="item">
-          <div v-if="activeName==3 && item==province"><HtmlPanel :data="province" /></div>
+          <div v-if="activeName==3 && item==province"><HtmlPanel :mapSrc="mapSrc" /></div>
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
-    <el-tab-pane label="一线/新一线" name="5">一线/新一线</el-tab-pane>
-    <el-tab-pane label="增长最快" name="6">增长最快</el-tab-pane>
-    <el-tab-pane label="下降最快" name="7">下降最快</el-tab-pane>
+    <el-tab-pane label="一线/新一线" name="4">
+      <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"/></div>
+    </el-tab-pane>
+    <el-tab-pane label="增长最快" name="5">
+      <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div>
+    </el-tab-pane>
+    <el-tab-pane label="下降最快" name="6">
+      <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div>
+    </el-tab-pane>
   </el-tabs>
 </div>
 </template>
@@ -83,6 +89,7 @@ import RefreshList from "./RefreshList.vue";
         rightTotal:0,
         rightPageNum: 1,
         rightPageLimt: 15,
+        mapSrc:'',
         tableHeader:[{
           prop:"股票代码",
           label:"股票代码"
@@ -139,6 +146,19 @@ import RefreshList from "./RefreshList.vue";
           this.indexLeftData(this.leftPageNum,this.leftPageLimt)
         }
       },
+      'activeName'(newval){
+        if(newval == 2){
+          this.mapSrc="http://106.52.123.19:58000/dashboard/get_map_by_country/中国"
+        } else if(newval == 3){
+          this.mapSrc=`http://106.52.123.19:58000/dashboard/get_map_by_country/${this.province}`
+        }else if(newval == 4){
+          this.mapSrc="http://106.52.123.19:58000/dashboard/get_map_of_top_city"    
+        }else if(newval == 5){
+          this.mapSrc="http://106.52.123.19:58000/dashboard/get_map_of_top_rise"
+        }else if(newval == 6){
+          this.mapSrc="http://106.52.123.19:58000/dashboard/get_map_of_tail_reduce"
+        }
+      } 
     },
     created(){
       this.indexLeftData(this.leftPageNum, this.leftPageLimt)                            

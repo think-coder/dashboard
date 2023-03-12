@@ -4,7 +4,7 @@
    id="iframeMapViewComponent"
    width="100%"
    height="700px"
-   :src="`http://106.52.123.19:58000/dashboard/get_map_by_country/${data}`"
+   :src="mapSrc"
    frameborder="0"
    scrolling="no"
    ref="iframeDom"
@@ -12,11 +12,11 @@
 </template>
 <script>
 export default {
-props: ["data"],
+  props: ["mapSrc"],
   data() {
     return {
       mounted(){
-        console.log(this.data, 'data')
+       
       }
     }
   }
