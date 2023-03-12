@@ -150,6 +150,7 @@ import RefreshList from "./RefreshList.vue";
         if(newval == 2){
           this.mapSrc="http://106.52.123.19:58000/dashboard/get_map_by_country/中国"
         } else if(newval == 3){
+          console.log(this.province,'province')
           this.mapSrc=`http://106.52.123.19:58000/dashboard/get_map_by_country/${this.province}`
         }else if(newval == 4){
           this.mapSrc="http://106.52.123.19:58000/dashboard/get_map_of_top_city"    
@@ -247,6 +248,7 @@ import RefreshList from "./RefreshList.vue";
       },
       handleProviceMap(e){
         this.province = e.name
+        this.mapSrc=`http://106.52.123.19:58000/dashboard/get_map_by_country/${this.province}`
       },
       
     }
