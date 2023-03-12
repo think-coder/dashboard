@@ -34,5 +34,5 @@ urlpatterns = [
     # 任务: 生成一线/新一线HTML文件
     path('tool_generate_columnar_map', views.Logic().tool_generate_columnar_map, name='tool_generate_columnar_map'),
     # 任务: 生成需求增加/下降最快的15种岗位
-    path('tool_generate_map_of_top_rise_reduce', views.Logic().tool_generate_map_of_top_rise_reduce, name='tool_generate_map_of_top_rise_reduce'),
+    path('tool_generate_map_of_rise_reduce', views.Logic().tool_generate_map_of_rise_reduce, name='tool_generate_map_of_rise_reduce'),
 ]

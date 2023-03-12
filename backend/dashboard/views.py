@@ -669,19 +669,21 @@ class Logic(object):
 
         return 
 
-    def tool_generate_map_of_top_rise_reduce(self, request):
+    def tool_generate_map_of_rise_reduce(self, request):
         """任务: 生成需求增加/下降最快的15种岗位"""
         _start = time.time()
-        print("Begin: tool_generate_map_of_top_rise_reduce")
+        print("Begin: tool_generate_map_of_rise_reduce")
         title_list = [i.title for i in Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
 
-        executor = ThreadPoolExecutor(max_workers=48)
+        _num = 1
+        executor = ThreadPoolExecutor(max_workers=20)
         for per, title in executor.map(Compute().compute_rise_per, title_list):
             per_list.append(per)
             map_dict[str(per)] = title
-            print(title, per)
+            print(_num, title, per)
+            _num += 1
 
         per_list.sort()
         top_per_list = per_list[0:15]
@@ -711,7 +713,7 @@ class Logic(object):
             .render(self.save_path + self.file_name.format(file_name="下降最快"))
         )
         _end = time.time()
-        print("End: tool_generate_map_of_top_rise_reduce")
+        print("End: tool_generate_map_of_rise_reduce")
         print("Total: {}".format(_end - _start))
 
         return JsonResponse({
