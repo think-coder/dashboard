@@ -3,7 +3,7 @@ import pyecharts.options as opts
 from pyecharts.charts import Map, Bar, Timeline
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from .models import Data, ProvinceCityMap, ProvinceMaptype
+from dashboard import models
 
 
 import time
@@ -46,12 +46,12 @@ from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED
 class Compute(object):
     def compute_province_per(self, country, year):
         """计算国级平均招聘量"""
-        data_list = ProvinceCityMap.objects.all().distinct("province")
+        data_list = models.ProvinceCityMap.objects.all().distinct("province")
         per_list = [["", 0]]
         for data in data_list:
             province = data.province
-            pos_count = Data.objects.filter(year=year).filter(work_province=province).count()
-            employer_count = Data.objects.filter(year=year).filter(work_province=province).distinct("employer").count()
+            pos_count = models.Data.objects.filter(year=year).filter(work_province=province).count()
+            employer_count = models.Data.objects.filter(year=year).filter(work_province=province).distinct("employer").count()
             if not pos_count or not employer_count:
                 return per_list
             per = round(pos_count / employer_count, 1)
@@ -60,12 +60,12 @@ class Compute(object):
 
     def compute_city_per(self, province, year):
         """计算省级平均招聘量"""
-        data_list = ProvinceCityMap.objects.filter(province__icontains=province).distinct("city")
+        data_list = models.ProvinceCityMap.objects.filter(province__icontains=province).distinct("city")
         per_list = [["", 0]]
         for data in data_list:
             city = data.city
-            pos_count = Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).count()
-            employer_count = Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).distinct("employer").count()
+            pos_count = models.Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).count()
+            employer_count = models.Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).distinct("employer").count()
             if not pos_count or not employer_count:
                 return per_list
             per = round(pos_count / employer_count, 1)
@@ -74,8 +74,8 @@ class Compute(object):
 
     def compute_rise_per(self, title):
         """计算增长率"""
-        left_point = Data.objects.filter(year='2017').filter(title=title).count()
-        right_point = Data.objects.filter(year='2021').filter(title=title).count()
+        left_point = models.Data.objects.filter(year='2017').filter(title=title).count()
+        right_point = models.Data.objects.filter(year='2021').filter(title=title).count()
         if not left_point or not right_point:
             per = round(right_point ** 1/4 - 1, 1)
         else:
@@ -90,7 +90,7 @@ class Logic(object):
 
     def get_employer(self, request, employer):
         """检索雇主是否存在"""
-        data = Data.objects.filter(employer__icontains = employer).distinct("employer")
+        data = models.Data.objects.filter(employer__icontains = employer).distinct("employer")
         employer_list = [i.employer for i in data]
 
         return JsonResponse({
@@ -99,7 +99,7 @@ class Logic(object):
 
     def get_total_employer(self, request):
         """获取雇主总数"""
-        data = Data.objects.all().distinct("employer").count()
+        data = models.Data.objects.all().distinct("employer").count()
 
         return JsonResponse({
             "data": data
@@ -225,7 +225,7 @@ class Logic(object):
 
     def get_total_by_employer(self, request, employer):
         """根据雇主名称获取招聘数量"""
-        data = Data.objects.filter(employer=employer).count()
+        data = models.Data.objects.filter(employer=employer).count()
 
         return JsonResponse({
             "data": data
@@ -606,7 +606,7 @@ class Logic(object):
 
     def get_all_province(self, request):
         """获取所有省份名称"""
-        res_data = ProvinceCityMap.objects.all().distinct("province")
+        res_data = models.ProvinceCityMap.objects.all().distinct("province")
         province_list = [i.province for i in res_data]
 
         return JsonResponse({
@@ -615,7 +615,7 @@ class Logic(object):
 
     def get_city_by_province(self, request, province):
         """获取省份下属市县名称"""
-        res_data = ProvinceCityMap.objects.filter(province=province)
+        res_data = models.ProvinceCityMap.objects.filter(province=province)
         city_list = [i.city for i in res_data]
 
         return JsonResponse({
@@ -670,7 +670,7 @@ class Logic(object):
     def generate_country_map(self, country):
         """生成国级HTML文件"""
         print("### Country: {} ###".format(country))
-        year_list = [i.year for i in Data.objects.all().distinct("year")]
+        year_list = [i.year for i in models.Data.objects.all().distinct("year")]
         print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
@@ -721,13 +721,13 @@ class Logic(object):
     def generate_province_map(self, province):
         """生成省级HTML文件"""
         print("### Province: {}###".format(province))
-        year_list = [i.year for i in Data.objects.all().distinct("year")]
+        year_list = [i.year for i in models.Data.objects.all().distinct("year")]
         print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
             print("### Year: {} ###".format(year))
             per_list = Compute().compute_city_per(province, year)
-            data_maptype = ProvinceMaptype.objects.filter(province=province)
+            data_maptype = models.ProvinceMaptype.objects.filter(province=province)
             maptype = str()
             if not data_maptype or len(data_maptype) != 1:
                 maptype = province
@@ -788,8 +788,8 @@ class Logic(object):
         per_list = []
         for city in top_city_list:
             print(city)
-            pos_count = Data.objects.filter(work_location=city).count()
-            employer_count = Data.objects.filter(work_location=city).distinct("employer").count()
+            pos_count = models.Data.objects.filter(work_location=city).count()
+            employer_count = models.Data.objects.filter(work_location=city).distinct("employer").count()
             if not pos_count or not employer_count:
                 per_list.append(0)
                 continue
@@ -810,12 +810,12 @@ class Logic(object):
 
     def generate_map_of_top_rise(self):
         """生成需求增加最快的15种岗位"""
-        title_list = [i.title for i in Data.objects.distinct("title")]
+        title_list = [i.title for i in models.Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
         for i in title_list:
-            left_point = Data.objects.filter(year='2017').filter(title=i).count()
-            right_point = Data.objects.filter(year='2021').filter(title=i).count()
+            left_point = models.Data.objects.filter(year='2017').filter(title=i).count()
+            right_point = models.Data.objects.filter(year='2021').filter(title=i).count()
             if not left_point or not right_point:
                 per = round(right_point ** 1/4 - 1, 1)
             else:
@@ -840,12 +840,12 @@ class Logic(object):
     
     def generate_map_of_tail_reduce(self):
         """生成需求下降最快的15种岗位"""
-        title_list = [i.title for i in Data.objects.distinct("title")]
+        title_list = [i.title for i in models.Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
         for i in title_list:
-            left_point = Data.objects.filter(year='2017').filter(title=i).count()
-            right_point = Data.objects.filter(year='2021').filter(title=i).count()
+            left_point = models.Data.objects.filter(year='2017').filter(title=i).count()
+            right_point = models.Data.objects.filter(year='2021').filter(title=i).count()
             if not left_point or not right_point:
                 per = round(right_point ** 1/4 - 1, 1)
             else:
@@ -953,7 +953,7 @@ class Logic(object):
                 if not _work_province:
                     _work_province = "None"
                 
-                Data.objects.create(
+                models.Data.objects.create(
                     id=_id,
                     ticker=_ticker,
                     employer=_employer,
@@ -995,7 +995,7 @@ class Logic(object):
     def tool_generate_province_map(self, request):
         """任务: 生成省级HTML文件"""
         print("Begin: tool_generate_province_map")
-        res_data = ProvinceCityMap.objects.all().distinct("province")
+        res_data = models.ProvinceCityMap.objects.all().distinct("province")
         province_list = [i.province for i in res_data]
         print(len(province_list), province_list)
         
@@ -1022,7 +1022,7 @@ class Logic(object):
         """任务: 生成需求增加/下降最快的15种岗位"""
         _start = time.time()
         print("Begin: tool_generate_map_of_rise_reduce")
-        title_list = [i.title for i in Data.objects.distinct("title")]
+        title_list = [i.title for i in models.Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
 
@@ -1068,3 +1068,978 @@ class Logic(object):
         return JsonResponse({
             "data": "OK"
         })
+
+    def tool_load_data_by_year(self, request):
+        year_list = [2017, 2018, 2019, 2020, 2021, 2022]
+        for year in year_list:
+            print(year)
+            all_data = models.Data.objects.all().filter(year=year)
+            for data in all_data:
+                if year == 2017:
+                    models.Year2017.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+                elif year == 2018:
+                    models.Year2018.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+                elif year == 2019:
+                    models.Year2019.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+                elif year == 2020:
+                    models.Year2020.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+                elif year == 2021:
+                    models.Year2021.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+                elif year == 2022:
+                    models.Year2022.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+        return 
+
+    def tool_load_data_by_province(self, request):
+        province_list = models.Data.objects.all().distinct("work_province")
+
+        for province in province_list:
+            print(province.work_province)
+            if province.work_province == "北京市":
+                data_list = models.Data.objects.all().filter(work_province="北京市")
+                for data in data_list:
+                    models.BeiJing.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "上海市":
+                data_list = models.Data.objects.all().filter(work_province="上海市")
+                for data in data_list:
+                    models.ShangHai.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "云南省":
+                data_list = models.Data.objects.all().filter(work_province="云南省")
+                for data in data_list:
+                    models.YunNan.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "内蒙古自治区":
+                data_list = models.Data.objects.all().filter(work_province="内蒙古自治区")
+                for data in data_list:
+                    models.NeiMengGu.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "吉林省":
+                data_list = models.Data.objects.all().filter(work_province="吉林省")
+                for data in data_list:
+                    models.JiLin.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "四川省":
+                data_list = models.Data.objects.all().filter(work_province="四川省")
+                for data in data_list:
+                    models.SiChuan.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "天津市":
+                data_list = models.Data.objects.all().filter(work_province="天津市")
+                for data in data_list:
+                    models.TianJin.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "宁夏回族自治区":
+                data_list = models.Data.objects.all().filter(work_province="宁夏回族自治区")
+                for data in data_list:
+                    models.NingXia.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "安徽省":
+                data_list = models.Data.objects.all().filter(work_province="安徽省")
+                for data in data_list:
+                    models.AnHui.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "山东省":
+                data_list = models.Data.objects.all().filter(work_province="山东省")
+                for data in data_list:
+                    models.ShanDong.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "山西省":
+                data_list = models.Data.objects.all().filter(work_province="山西省")
+                for data in data_list:
+                    models.ShanXi_1.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "广东省":
+                data_list = models.Data.objects.all().filter(work_province="广东省")
+                for data in data_list:
+                    models.GuangDong.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "广西壮族自治区":
+                data_list = models.Data.objects.all().filter(work_province="广西壮族自治区")
+                for data in data_list:
+                    models.GuangXi.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "新疆维吾尔自治区":
+                data_list = models.Data.objects.all().filter(work_province="新疆维吾尔自治区")
+                for data in data_list:
+                    models.XinJiang.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "江苏省":
+                data_list = models.Data.objects.all().filter(work_province="江苏省")
+                for data in data_list:
+                    models.JiangSu.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "江西省":
+                data_list = models.Data.objects.all().filter(work_province="江西省")
+                for data in data_list:
+                    models.JiangXi.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "河北省":
+                data_list = models.Data.objects.all().filter(work_province="河北省")
+                for data in data_list:
+                    models.HeBei.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "河南省":
+                data_list = models.Data.objects.all().filter(work_province="河南省")
+                for data in data_list:
+                    models.HeNan.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "浙江省":
+                data_list = models.Data.objects.all().filter(work_province="浙江省")
+                for data in data_list:
+                    models.ZheJiang.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "海南省":
+                data_list = models.Data.objects.all().filter(work_province="海南省")
+                for data in data_list:
+                    models.HaiNan.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "湖北省":
+                data_list = models.Data.objects.all().filter(work_province="湖北省")
+                for data in data_list:
+                    models.HuBei.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "湖南省":
+                data_list = models.Data.objects.all().filter(work_province="湖南省")
+                for data in data_list:
+                    models.HuNan.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "甘肃省":
+                data_list = models.Data.objects.all().filter(work_province="甘肃省")
+                for data in data_list:
+                    models.GanSu.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "福建省":
+                data_list = models.Data.objects.all().filter(work_province="福建省")
+                for data in data_list:
+                    models.FuJian.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "西藏自治区":
+                data_list = models.Data.objects.all().filter(work_province="西藏自治区")
+                for data in data_list:
+                    models.XiZang.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "贵州省":
+                data_list = models.Data.objects.all().filter(work_province="贵州省")
+                for data in data_list:
+                    models.GuiZhou.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "重庆市":
+                data_list = models.Data.objects.all().filter(work_province="重庆市")
+                for data in data_list:
+                    models.ChongQing.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "陕西省":
+                data_list = models.Data.objects.all().filter(work_province="陕西省")
+                for data in data_list:
+                    models.ShanXi_2.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "青海省":
+                data_list = models.Data.objects.all().filter(work_province="青海省")
+                for data in data_list:
+                    models.QingHai.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+            elif province.work_province == "黑龙江省":
+                data_list = models.Data.objects.all().filter(work_province="黑龙江省")
+                for data in data_list:
+                    models.HeiLongJiang.objects.create(
+                        id=data.id,
+                        ticker=data.ticker,
+                        employer=data.employer,
+                        title=data.title,
+                        salary_range=data.salary_range,
+                        a_sala_range_start=data.a_sala_range_start,
+                        a_sala_range_end=data.a_sala_range_end,
+                        work_experience=data.work_experience,
+                        work_location=data.work_location,
+                        edu_require=data.edu_require,
+                        publish_date=data.publish_date,
+                        source=data.source,
+                        pos_require=data.pos_require,
+                        lang_require=data.lang_require,
+                        age_require=data.age_require,
+                        employ_type=data.employ_type,
+                        year=data.year,
+                        day=data.day,
+                        count=data.count,
+                        industry=data.industry,
+                        work_province=data.work_province
+                    )
+
+        return
+            

@@ -194,3 +194,33 @@ class QingHai(Data):
 class HeiLongJiang(Data):
     class Meta:
         db_table = "heilongjiang"
+
+
+class Year2017(Data):
+    class Meta:
+        db_table = "data_2017"
+
+
+class Year2018(Data):
+    class Meta:
+        db_table = "data_2018"
+
+
+class Year2019(Data):
+    class Meta:
+        db_table = "data_2019"
+
+
+class Year2020(Data):
+    class Meta:
+        db_table = "data_2020"
+
+
+class Year2021(Data):
+    class Meta:
+        db_table = "data_2021"
+
+
+class Year2022(Data):
+    class Meta:
+        db_table = "data_2022"

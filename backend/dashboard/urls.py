@@ -28,7 +28,11 @@ urlpatterns = [
     # 获取需求下降最快的15种岗位HTML图
     path('get_map_of_tail_reduce', views.Logic().get_map_of_tail_reduce, name='get_map_of_tail_reduce'),
     # 导入数据
-    path('load_data', views.Logic().tool_load_data, name='load_data'),
+    path('tool_load_data', views.Logic().tool_load_data, name='tool_load_data'),
+    # 导入年份数据
+    path('tool_load_data_by_year', views.Logic().tool_load_data_by_year, name='tool_load_data_by_year'),
+    # 导入省份数据
+    path('tool_load_data_by_province', views.Logic().tool_load_data_by_province, name='tool_load_data_by_province'),
     # 任务: 生成国级HTML文件
     path('tool_generate_country_map', views.Logic().tool_generate_country_map, name='tool_generate_country_map'),
     # 任务: 生成省级HTML文件
@@ -36,5 +40,5 @@ urlpatterns = [
     # 任务: 生成一线/新一线HTML文件
     path('tool_generate_columnar_map', views.Logic().tool_generate_columnar_map, name='tool_generate_columnar_map'),
     # 任务: 生成需求增加/下降最快的15种岗位
-    path('tool_generate_map_of_rise_reduce', views.Logic().tool_generate_map_of_rise_reduce, name='tool_generate_map_of_rise_reduce'),
+    path('tool_generate_map_of_rise_reduce', views.Logic().tool_generate_map_of_rise_reduce, name='tool_generate_map_of_rise_reduce'), 
 ]
