@@ -25,6 +25,8 @@ urlpatterns = [
     path('get_map_of_top_city', views.Logic().get_map_of_top_city, name='get_map_of_top_city'),
     # 获取需求增加最快的15种岗位HTML图
     path('get_map_of_top_rise', views.Logic().get_map_of_top_rise, name='get_map_of_top_rise'),
+    # 获取需求下降最快的15种岗位HTML图
+    path('get_map_of_tail_reduce', views.Logic().get_map_of_tail_reduce, name='get_map_of_tail_reduce'),
     # 导入数据
     path('load_data', views.Logic().tool_load_data, name='load_data'),
     # 任务: 生成国级HTML文件
