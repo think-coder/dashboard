@@ -1070,7 +1070,7 @@ class Logic(object):
         })
 
     def tool_load_data_by_year(self, request):
-        year_list = [2017, 2018, 2019, 2020, 2021, 2022]
+        year_list = [2018, 2019, 2020, 2021, 2022]
         for year in year_list:
             print(year)
             all_data = models.Data.objects.all().filter(year=year)
@@ -1224,7 +1224,9 @@ class Logic(object):
                         work_province=data.work_province
                     )
 
-        return 
+        return JsonResponse({
+            "data": "OK"
+        }) 
 
     def tool_load_data_by_province(self, request):
         province_list = models.Data.objects.all().distinct("work_province")
@@ -2041,5 +2043,27 @@ class Logic(object):
                         work_province=data.work_province
                     )
 
-        return
-            
+        return JsonResponse({
+            "data": "OK"
+        })
+
+    def tool_load_employer(self, request):
+        _id = 1
+        all_data = models.Data.objects.all()
+        data_list = all_data.distinct("employer")
+        for data in data_list:
+            print(data.employer)
+            employer_result = all_data.filter(employer=data.employer)
+            employer_count = employer_result.count()
+            area = employer_result[:1]
+            models.Employer.objects.create(
+                id=_id,
+                name=data.employer,
+                area=area[0].work_province,
+                employer_count=employer_count
+            )
+            _id += 1
+
+        return JsonResponse({
+            "data": "OK"
+        })

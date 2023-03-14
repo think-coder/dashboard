@@ -41,6 +41,16 @@ class ProvinceMaptype(models.Model):
     class Meta:
         db_table = "province_maptype"
 
+
+class Employer(models.Model):
+    name = models.CharField(max_length=256)
+    area = models.CharField(max_length=256)
+    employer_count = models.IntegerField()
+
+    class Meta:
+        db_table = "employer"
+
+
 class ShangHai(Data):
     class Meta:
         db_table = "shanghai"
