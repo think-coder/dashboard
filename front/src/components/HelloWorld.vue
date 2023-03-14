@@ -16,7 +16,7 @@
         <div>
           <div class="index-content">
             <el-table :data="rightPageData" style="width: 100%;overflow:scroll">
-              <el-table-column v-for="(item, index) in tableHeader" :key="index" :prop="item.prop" :label="item.label" width="180"></el-table-column>
+              <el-table-column :fixed="index===1" v-for="(item, index) in tableHeader" :key="index" :prop="item.prop" :label="item.label" width="160"></el-table-column>
               <el-table-column
                 fixed="right"
                 label="操作"
@@ -25,7 +25,7 @@
                       <el-button slot="reference" type="text" size="small" @click="handleClickZzDetail(scope.row)">职责范围</el-button>
                       <el-button slot="reference" type="text" size="small" @click="handleClickRzDetail(scope.row)">任职要求</el-button>
                     </template>
-            </el-table-column>
+              </el-table-column>
             </el-table>
             
           </div>
@@ -258,6 +258,8 @@ import RefreshList from "./RefreshList.vue";
   .container{
     width: 100%;
     height: 100vh;
+    padding: 6px 10px;
+    box-sizing: border-box;
   }
   .el-dropdown-link {
     cursor: pointer;
