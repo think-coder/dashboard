@@ -189,7 +189,7 @@ import RefreshList from "./RefreshList.vue";
         if(this.searchData !== ''){
           this.searchLoading = true
           this.$http.get(`/dashboard/get_employer/${this.searchData}`).then(res=>{
-            this.leftPageData = res
+            this.leftPageData = res.data
             this.leftTotal = res.total
             this.searchLoading = false
           }).catch(()=>{
