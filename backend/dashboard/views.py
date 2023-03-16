@@ -1,17 +1,16 @@
 import os
+import time
+
 import pyecharts.options as opts
 from pyecharts.charts import Map, Bar, Timeline
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from dashboard import models
-
-
-import time
-import json
-from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
-
 from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login,logout,authenticate
+
+from dashboard import models
 
 
 class Compute(object):
@@ -59,6 +58,59 @@ class Logic(object):
         self.file_name = "{file_name}.html"
         self.save_path = "./dashboard/templates/"
 
+    def login(self, request):
+        """用户登录"""
+        if request.method == "POST":
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            user = authenticate(username=username,password=password)
+            if not user:
+                return JsonResponse({
+                    "code": 404,
+                    "data": "用户名或密码错误"
+                })
+            else:
+                login(request, user)
+                return JsonResponse({
+                    "code": 200,
+                    "data": "登录成功"
+                })
+        else:
+            return JsonResponse({
+                "code": 500,
+                "data": "服务端异常"
+            })
+
+    def logout(self, request):
+        """用户登出"""
+        logout(request)
+        return JsonResponse({
+            "code": 200,
+            "data": "登出成功"
+        })
+
+    def registry(self, request):
+        """用户注册"""
+        if request.method == "POST":
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            if not User.objects.filter(username=username):
+                user = User.objects.create_user(username=username, password=password)
+                return JsonResponse({
+                    "code": 200,
+                    "data": "注册成功"
+                })
+            else:
+                return JsonResponse({
+                    "code": 404,
+                    "data": "用户名已存在"
+                })
+        else:
+            return JsonResponse({
+                "code": 500,
+                "data": "服务端异常"
+            })
+ 
     def get_employer(self, request, employer):
         """检索雇主是否存在"""
         data = models.Employer.objects.filter(name__icontains = employer)
