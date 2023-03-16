@@ -3,6 +3,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # 注册
+    path('registry', views.Logic().registry, name='registry'),
+    # 登录
+    path('login', views.Logic().login, name='login'),
+    # 登出
+    path('logout', views.Logic().logout, name='logout'),
     # 检索雇主是否存在
     path('get_employer/<str:employer>', views.Logic().get_employer, name='get_employer'),
     # 获取雇主总数量
