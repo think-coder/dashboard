@@ -39,16 +39,6 @@ export default {
       getcode:"",
     }
   },
-  created(){
-  },
-  methods: {
-    RegisterBtn(){
-      
-    },
-    goLoginPage(){
-      this.$router.replace('/')
-    }
-  },
   watch:{
     //输入账号
     'number'(newval) {
@@ -60,6 +50,31 @@ export default {
     'getcode'(newval) {
       if (newval.length !== 0) {
       }
+    }
+  },
+  created(){
+  },
+  methods: {
+    RegisterBtn(){
+      if(this.number && this.getcode){
+        this.$http.post('/dashboard/registry',{
+          username: this.number,
+          password: this.getcode
+        }).then(res=>{
+          console.log(res,' 注册')
+          if(res.code == 200){
+            this.$router.replace('/')
+            alert(res.data)
+          }else {
+            alert(res.data)
+          }
+        })
+      } else {
+        alert('请将注册信息填写完整！')
+      }
+    },
+    goLoginPage(){
+      this.$router.replace('/')
     }
   }
 }

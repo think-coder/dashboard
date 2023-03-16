@@ -61,6 +61,7 @@
       <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div>
     </el-tab-pane>
   </el-tabs>
+  <div class="logout" @click="outlogFn">登出</div>
 </div>
 </template>
 <script>
@@ -250,7 +251,16 @@ import RefreshList from "./RefreshList.vue";
         this.province = e.name
         this.mapSrc=`http://106.52.123.19:58000/dashboard/get_map_by_country/${this.province}`
       },
-      
+      outlogFn(){
+        this.$http.post('/dashboard/logout',{
+          username: this.$route.query.username
+        }).then(res=>{
+          console.log(res,' 登录')
+          if(res.code == 200) this.$router.replace('/')
+        }).catch(()=>{
+          alert('接口错误！')
+        })
+      }
     }
   };
 </script>
@@ -328,5 +338,19 @@ import RefreshList from "./RefreshList.vue";
   }
   .input-with-select .el-input-group__prepend {
     background-color: #fff;
+  }
+  .logout{
+    width: 50px;
+    height: 26px;
+    text-align: center;
+    background: #ccc;
+    border-radius: 4px;
+    line-height: 26px;
+    font-size: 14px;
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+
   }
 </style>

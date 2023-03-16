@@ -19,6 +19,7 @@ request.interceptors.request.use(function (config) {
     ...config,
     headers: {
       ...config.headers,
+      "Content-Type": 'multipart/form-data'
     }
   }
   // 发送请求之前做些什么

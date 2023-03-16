@@ -43,7 +43,22 @@ export default {
   },
   methods: {
     loginBtn(){
-      this.$router.replace('/mainpage')
+      if(this.number && this.getcode){
+        this.$http.post('/dashboard/login',{
+          username: this.number,
+          password: this.getcode
+        }).then(res=>{
+          console.log(res.headers["Set-Cookie"],' 登录')
+          this.$router.replace(`/mainpage?username=${this.number}`)
+          if(res.code == 200){
+            this.$router.replace(`/mainpage?username=${this.number}`)
+          }else {
+            alert(res.data)
+          }
+        })
+      } else {
+        alert('请将登录信息填写完整！')
+      }
     },
     goRegister(){
       this.$router.replace('/register')
