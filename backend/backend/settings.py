@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+LOGIN_URL = "http://106.52.123.19:58080/login"
 
 # Application definition
 
