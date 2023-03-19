@@ -19,6 +19,7 @@ request.interceptors.request.use(function (config) {
     ...config,
     headers: {
       ...config.headers,
+      sessionid: document.cookie.split('=')[1],
       "Content-Type": 'multipart/form-data'
     }
   }
