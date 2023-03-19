@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django_apscheduler',
     "dashboard.apps.DashboardConfig",
     "corsheaders",  # 设置跨域
+    # "sslserver",
+    # 'werkzeug_debugger_runserver',
+    # 'django_extensions',
 ]
 
 MIDDLEWARE = [

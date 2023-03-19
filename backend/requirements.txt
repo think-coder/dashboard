@@ -1,8 +1,13 @@
 APScheduler==3.10.1
 asgiref==3.6.0
+cffi==1.15.1
+cryptography==39.0.2
 Django==4.0
 django-apscheduler==0.6.2
 django-cors-headers==3.14.0
+django-extensions==3.2.1
+django-sslserver==0.22
+django-werkzeug-debugger-runserver==0.3.1
 echarts-china-cities-pypkg==0.0.9
 echarts-china-counties-pypkg==0.0.2
 echarts-china-misc-pypkg==0.0.1
@@ -15,8 +20,10 @@ lml==0.0.2
 MarkupSafe==2.1.2
 prettytable==3.6.0
 psycopg2==2.9.5
+pycparser==2.21
 pyecharts==2.0.2
 pyecharts-jupyter-installer==0.0.3
+pyOpenSSL==23.0.0
 pytz==2022.7.1
 pytz-deprecation-shim==0.1.0.post0
 simplejson==3.18.3
@@ -25,3 +32,4 @@ sqlparse==0.4.3
 tzdata==2022.7
 tzlocal==4.2
 wcwidth==0.2.6
+Werkzeug==2.2.3
