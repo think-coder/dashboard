@@ -48,8 +48,7 @@ export default {
           username: this.number,
           password: this.getcode
         }).then(res=>{
-          console.log(res.headers["Set-Cookie"],' 登录')
-          this.$router.replace(`/mainpage?username=${this.number}`)
+          // this.$router.replace(`/mainpage?username=${this.number}`)
           if(res.code == 200){
             this.$router.replace(`/mainpage?username=${this.number}`)
           }else {

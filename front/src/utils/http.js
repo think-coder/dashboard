@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+axios.defaults.withCredentials = true
 const request = axios.create({
   baseURL: 'http://106.52.123.19:58000',
   timeout: 50000,
