@@ -77,6 +77,7 @@ class Logic(object):
                     "data": "登录成功"
                 })
                 res['Access-Control-Expose-Headers'] = "*"
+                res['Access-Control-Allow-Origin'] = "*"
                 return res
         else:
             return JsonResponse({
@@ -115,7 +116,7 @@ class Logic(object):
                 "data": "服务端异常"
             })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_employer(self, request, employer):
         """检索雇主是否存在"""
         data = models.Employer.objects.filter(name__icontains = employer)
@@ -125,7 +126,7 @@ class Logic(object):
             "data": employer_list
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_total_employer(self, request):
         """获取雇主总数"""
         data = models.Employer.objects.all().distinct("name").count()
@@ -134,7 +135,7 @@ class Logic(object):
             "data": data
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_employer_by_limit(self, request, page, num):
         """获取区间雇主列表"""
         data = models.Employer.objects.all()
@@ -156,7 +157,7 @@ class Logic(object):
             "data": data
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_employer_data_by_limit(self, request, employer, page, num):
         """获取雇主的区间数据"""
         data = models.Data.objects.filter(employer=employer)
@@ -188,7 +189,7 @@ class Logic(object):
             "data": employer_list
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_all_province(self, request):
         """获取所有省份名称"""
         res_data = models.ProvinceCityMap.objects.all().distinct("province")
@@ -198,7 +199,7 @@ class Logic(object):
             "data": province_list
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_city_by_province(self, request, province):
         """获取省份下属市县名称"""
         res_data = models.ProvinceCityMap.objects.filter(province=province)
@@ -208,7 +209,7 @@ class Logic(object):
             "data": city_list
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_map_by_country(self, request, country):
         """获取国级展示图"""
         if os.path.exists(self.save_path + self.file_name.format(file_name=country)):
@@ -218,7 +219,7 @@ class Logic(object):
 
         return render(request, self.file_name.format(file_name=country), {})
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_map_by_province(self, request, province):
         """获取省级展示图"""
         if os.path.exists(self.save_path + self.file_name.format(file_name=province)):
@@ -228,7 +229,7 @@ class Logic(object):
 
         return render(request, self.file_name.format(file_name=province), {})
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_map_of_top_city(self, request):
         """获取一线/新一线HTML图"""
         if os.path.exists(self.save_path + self.file_name.format(file_name="新一线")):
@@ -238,7 +239,7 @@ class Logic(object):
 
         return render(request, self.file_name.format(file_name="新一线"), {})
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_map_of_top_rise(self, request):
         """获取需求增加最快的15种岗位"""
         if os.path.exists(self.save_path + self.file_name.format(file_name="增长最快")):
@@ -248,7 +249,7 @@ class Logic(object):
 
         return render(request, self.file_name.format(file_name="增长最快"), {})
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_map_of_tail_reduce(self, request):
         """获取需求下降最快的15种岗位"""
         if os.path.exists(self.save_path + self.file_name.format(file_name="下降最快")):

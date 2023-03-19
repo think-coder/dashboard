@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-LOGIN_URL = "http://106.52.123.19:58080/login"
+LOGIN_URL = "http://172.21.149.254:58080/login"
+
+SESSION_COOKIE_HTTPONLY = False
 
 # Application definition
 
