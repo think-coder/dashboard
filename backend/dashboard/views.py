@@ -148,7 +148,7 @@ class Logic(object):
             "data": employer_list
         })
 
-    @method_decorator(login_required())
+    # @method_decorator(login_required())
     def get_total_by_employer(self, request, employer):
         """根据雇主名称获取招聘数量"""
         data = models.Data.objects.filter(employer=employer).count()
