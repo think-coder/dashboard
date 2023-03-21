@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-LOGIN_URL = "http://10.26.9.1:58080/login"
+LOGIN_URL = "https://10.26.9.1:58080/login"
 
 SESSION_COOKIE_HTTPONLY = False
 
@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     'django_apscheduler',
     "dashboard.apps.DashboardConfig",
     "corsheaders",  # 设置跨域
-    # "sslserver",
-    # 'werkzeug_debugger_runserver',
-    # 'django_extensions',
+    "sslserver",
+    'werkzeug_debugger_runserver',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +146,5 @@ CORS_ALLOW_HEADERS = ('*')
 # X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'None'
+
+SECURE_SSL_REDIRECT = True
