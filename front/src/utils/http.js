@@ -1,7 +1,7 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true
 const request = axios.create({
-  baseURL: 'http://106.52.123.19:58000',
+  baseURL: 'http://10.26.9.1:58000',
   timeout: 50000,
   // retry:2,
   // retryDelay:1000
@@ -19,7 +19,7 @@ request.interceptors.request.use(function (config) {
     ...config,
     headers: {
       ...config.headers,
-      sessionid: document.cookie.split('=')[1],
+      // sessionid: document.cookie.split('=')[1],
       "Content-Type": 'multipart/form-data'
     }
   }

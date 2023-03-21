@@ -13,7 +13,8 @@ Vue.use(VueRouter)
 
 // 3. 创建路由的实例对象
 const router = new VueRouter({
-    mode:'history',
+    // mode:'hash',
+    // mode:'history',
     routes: [
         {
             path: '/',
@@ -26,7 +27,7 @@ const router = new VueRouter({
         },
         {
             path: '/mainpage',
-            name: 'Login',
+            name: 'Mainpage',
             component: MainPage
         },
         {
