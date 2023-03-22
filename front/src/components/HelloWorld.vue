@@ -149,16 +149,16 @@ import RefreshList from "./RefreshList.vue";
       },
       'activeName'(newval){
         if(newval == 2){
-          this.mapSrc="https://10.26.9.1:58000/dashboard/get_map_by_country/中国"
+          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_by_country/中国"
         } else if(newval == 3){
           console.log(this.province,'province')
-          this.mapSrc=`https://10.26.9.1:58000/dashboard/get_map_by_country/${this.province}`
+          this.mapSrc=`http://10.26.9.1:58000/dashboard/get_map_by_country/${this.province}`
         }else if(newval == 4){
-          this.mapSrc="https://10.26.9.1:58000/dashboard/get_map_of_top_city"    
+          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_of_top_city"    
         }else if(newval == 5){
-          this.mapSrc="https://10.26.9.1:58000/dashboard/get_map_of_top_rise"
+          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_of_top_rise"
         }else if(newval == 6){
-          this.mapSrc="https://10.26.9.1:58000/dashboard/get_map_of_tail_reduce"
+          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_of_tail_reduce"
         }
       } 
     },
@@ -249,7 +249,7 @@ import RefreshList from "./RefreshList.vue";
       },
       handleProviceMap(e){
         this.province = e.name
-        this.mapSrc=`https://10.26.9.1:58000/dashboard/get_map_by_country/${this.province}`
+        this.mapSrc=`http://10.26.9.1:58000/dashboard/get_map_by_country/${this.province}`
       },
       outlogFn(){
         this.$http.post('/dashboard/logout',{
