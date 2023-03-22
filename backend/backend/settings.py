@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-LOGIN_URL = "https://10.26.9.1:58080/login"
+LOGIN_URL = "http://10.26.9.1:58080/login"
 
 SESSION_COOKIE_HTTPONLY = False
 
