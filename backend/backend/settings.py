@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+LOGIN_URL = "https://10.26.9.1:58080/login"
+
+SESSION_COOKIE_HTTPONLY = False
 
 # Application definition
 
@@ -40,6 +43,9 @@ INSTALLED_APPS = [
     'django_apscheduler',
     "dashboard.apps.DashboardConfig",
     "corsheaders",  # 设置跨域
+    "sslserver",
+    'werkzeug_debugger_runserver',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +146,12 @@ CORS_ALLOW_HEADERS = ('*')
 # X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'None'
+
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = False # 将所有非SSL请求永久重定向到SSL
+# SESSION_COOKIE_SECURE = True # 仅通过https传输cookie
+# CSRF_COOKIE_SECURE = True # 仅通过https传输cookie
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True # 严格要求使用https协议传输
+# SECURE_HSTS_PRELOAD = True # HSTS为
+# SECURE_HSTS_SECONDS = 60
+# SECURE_CONTENT_TYPE_NOSNIFF = True # 防止浏览器猜测资产的内容类型
