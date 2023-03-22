@@ -1,25 +1,43 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/Home.vue'
+// src/router/index.js 就是当前项目的路由模块
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+// 1. 导入 Vue 和VueRouter 的包
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Login from '../components/Login'
+import Register from '../components/Register'
+import MainPage from '../components/HelloWorld'
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+// 2. 把 VueRouter 安装为 Vue 项目的插件
+// Vue.use() 函数的作用，就是来安装插件的
+Vue.use(VueRouter)
+
+// 3. 创建路由的实例对象
+const router = new VueRouter({
+    // mode:'hash',
+    // mode:'history',
+    routes: [
+        {
+            path: '/',
+            redirect: '/login'
+        },
+        {
+            path: '/login',
+            name: 'Login',
+            component: Login
+        },
+        {
+            path: '/mainpage',
+            name: 'Mainpage',
+            component: MainPage
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register
+            
+        }
+    ]
 })
 
+// 4. 向外共享路由实例对象
 export default router

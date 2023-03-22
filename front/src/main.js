@@ -1,13 +1,16 @@
-import { createApp } from 'vue'
+import Vue from 'vue'
 import App from './App.vue'
+import ElementUI from 'element-ui';
+import http from './utils/http'
 import router from './router'
-import store from './store'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+import 'element-ui/lib/theme-chalk/index.css';
+import '../src/assets/global.css'
 
+Vue.use(ElementUI);
+Vue.use(http);
+Vue.config.productionTip = false
 
-const app = createApp(App);                      // 创建app实例
-app.use(store)
-app.use(router)
-app.use(ElementPlus)                            //配置axios的全局引用
-app.mount('#app')                               // 将app实例 全局挂载至 app 元素
+new Vue({
+  render: h => h(App),
+  router
+}).$mount('#app')
