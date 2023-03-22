@@ -180,8 +180,8 @@ class Logic(object):
                 "语言要求": i.lang_require,
                 "年龄要求": i.age_require,
                 "雇主所在行业": i.industry,
-                "职责描述": i.pos_require,
-                "任职要求": i.pos_require
+                "pos_require": i.pos_require,
+                "pos_text": i.pos_require
             })
 
         return JsonResponse({
@@ -574,19 +574,19 @@ class Logic(object):
 
         return HttpResponse("Finish")
 
-    def tool_generate_country_map(self, request):
+    def job_generate_country_map(self, request):
         """任务: 生成国级HTML文件"""
-        print("Begin: tool_generate_country_map")
+        print("Begin: job_generate_country_map")
         self.generate_country_map("中国")
-        print("End: tool_generate_country_map")
+        print("End: job_generate_country_map")
 
         return JsonResponse({
             "data": "OK"
         })
 
-    def tool_generate_province_map(self, request):
+    def job_generate_province_map(self, request):
         """任务: 生成省级HTML文件"""
-        print("Begin: tool_generate_province_map")
+        print("Begin: job_generate_province_map")
         res_data = models.ProvinceCityMap.objects.all().distinct("province")
         province_list = [i.province for i in res_data]
         print(len(province_list), province_list)
@@ -596,24 +596,24 @@ class Logic(object):
         all_task=[pool.submit(self.generate_province_map, (i)) for i in province_list]
         wait(all_task, return_when=ALL_COMPLETED)
         pool.shutdown()
-        print("End: tool_generate_province_map")
+        print("End: job_generate_province_map")
 
         return JsonResponse({
             "data": "OK"
         })
 
-    def tool_generate_columnar_map(self, request):
+    def job_generate_columnar_map(self, request):
         """任务: 生成一线/新一线HTML文件"""
-        print("Begin: tool_generate_columnar_map")
+        print("Begin: job_generate_columnar_map")
         self.generate_map_of_top_city()
-        print("End: tool_generate_columnar_map")
+        print("End: job_generate_columnar_map")
 
         return 
 
-    def tool_generate_map_of_rise_reduce(self, request):
+    def job_generate_map_of_rise_reduce(self, request):
         """任务: 生成需求增加/下降最快的15种岗位"""
         _start = time.time()
-        print("Begin: tool_generate_map_of_rise_reduce")
+        print("Begin: job_generate_map_of_rise_reduce")
         title_list = [i.title for i in models.Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
@@ -654,7 +654,7 @@ class Logic(object):
             .render(self.save_path + self.file_name.format(file_name="下降最快"))
         )
         _end = time.time()
-        print("End: tool_generate_map_of_rise_reduce")
+        print("End: job_generate_map_of_rise_reduce")
         print("Total: {}".format(_end - _start))
 
         return JsonResponse({

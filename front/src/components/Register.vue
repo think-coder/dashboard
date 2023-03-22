@@ -57,7 +57,7 @@ export default {
   methods: {
     RegisterBtn(){
       if(this.number && this.getcode){
-        this.$http.post('/dashboard/registry',{
+        this.$http.post('/user/registry',{
           username: this.number,
           password: this.getcode
         }).then(res=>{

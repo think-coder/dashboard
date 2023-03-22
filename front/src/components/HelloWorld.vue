@@ -149,16 +149,16 @@ import RefreshList from "./RefreshList.vue";
       },
       'activeName'(newval){
         if(newval == 2){
-          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_by_country/中国"
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/中国"
         } else if(newval == 3){
           console.log(this.province,'province')
-          this.mapSrc=`http://10.26.9.1:58000/dashboard/get_map_by_country/${this.province}`
+          this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.province}`
         }else if(newval == 4){
-          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_of_top_city"    
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_top_city"    
         }else if(newval == 5){
-          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_of_top_rise"
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_top_rise"
         }else if(newval == 6){
-          this.mapSrc="http://10.26.9.1:58000/dashboard/get_map_of_tail_reduce"
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_tail_reduce"
         }
       } 
     },
@@ -174,7 +174,7 @@ import RefreshList from "./RefreshList.vue";
       },
       // 首页左侧数据
       indexLeftData(num,limt){
-        this.$http.get(`/dashboard/get_employer_by_limit/${num}/${limt}`).then(res=>{
+        this.$http.get(`/resource/get_employer_by_limit/${num}/${limt}`).then(res=>{
           this.leftPageData = this.leftPageData.concat(res.data)
           if(num == 1){
             this.curLeftData = res.data[0]
@@ -189,7 +189,7 @@ import RefreshList from "./RefreshList.vue";
       getSearchData(){
         if(this.searchData !== ''){
           this.searchLoading = true
-          this.$http.get(`/dashboard/get_employer/${this.searchData}`).then(res=>{
+          this.$http.get(`/resource/get_employer/${this.searchData}`).then(res=>{
             this.leftPageData = res.data
             this.leftTotal = res.total
             this.searchLoading = false
@@ -215,7 +215,7 @@ import RefreshList from "./RefreshList.vue";
       },
       // 首页右侧数据
       getRightData(_curLeftData,_rightPageNum,_rightPageLimt){
-        this.$http.get(`/dashboard/get_employer_data_by_limit/${_curLeftData}/${_rightPageNum}/${_rightPageLimt}`).then(res=>{
+        this.$http.get(`/resource/get_employer_data_by_limit/${_curLeftData}/${_rightPageNum}/${_rightPageLimt}`).then(res=>{
           this.rightPageData= res.data
           this.rightTotal = res.total
         }).catch(()=>{
@@ -240,7 +240,7 @@ import RefreshList from "./RefreshList.vue";
       },
       // 获取全国省份
       getAllProvince(){
-        this.$http.get('/dashboard/get_all_province').then(res=>{
+        this.$http.get('/resource/get_all_province').then(res=>{
           this.allProvince = res.data
           this.province = res.data[0]
         }).catch(()=>{
@@ -249,10 +249,10 @@ import RefreshList from "./RefreshList.vue";
       },
       handleProviceMap(e){
         this.province = e.name
-        this.mapSrc=`http://10.26.9.1:58000/dashboard/get_map_by_country/${this.province}`
+        this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.province}`
       },
       outlogFn(){
-        this.$http.post('/dashboard/logout',{
+        this.$http.post('/resource/logout',{
           username: this.$route.query.username
         }).then(res=>{
           console.log(res,' 登录')

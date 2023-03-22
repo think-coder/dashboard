@@ -44,7 +44,7 @@ export default {
   methods: {
     loginBtn(){
       if(this.number && this.getcode){
-        this.$http.post('/dashboard/login',{
+        this.$http.post('/user/login',{
           username: this.number,
           password: this.getcode
         }).then(res=>{
