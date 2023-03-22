@@ -252,7 +252,7 @@ import RefreshList from "./RefreshList.vue";
         this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.province}`
       },
       outlogFn(){
-        this.$http.post('/resource/logout',{
+        this.$http.post('/user/logout',{
           username: this.$route.query.username
         }).then(res=>{
           console.log(res,' 登录')
