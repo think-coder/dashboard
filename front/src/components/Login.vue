@@ -17,13 +17,24 @@
           <div class="input-title">密码</div>
           <div class="login-number-box">
             <img class="login-icon" src="../assets/images/l-password.png" alt="">
-            <input type="text" v-model="getcode" placeholder="请输入密码">
+            <input type="password" v-model="getcode" placeholder="请输入密码">
           </div>
         </div>
-        <button class="login-btn" @click="loginBtn" >登录</button>
-        <div class="account-box">
-          没有账户？<span @click="goRegister">马上注册</span>
+        <div class="login-code-box">
+          <div class="input-title">验证码</div>
+          <div class="login-number-box">
+            <img class="login-icon" src="../assets/images/l-code.png" alt="">
+            <input type="text" v-model="checkcode" placeholder="请输入验证码">
+          </div>
+          <div class="login-number-box-ex">
+            <img class="login-code" :src="image_code_url" @click="generate_image_code" alt="" rel="noreferrer">
+          </div>
+
         </div>
+        <button class="login-btn" @click="loginBtn" >登录</button>
+        <!-- <div class="account-box">
+          没有账户？<span @click="goRegister">马上注册</span>
+        </div> -->
       </div>
     </div>
     
@@ -32,23 +43,37 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 export default {
-  data(){
+  data() {
     return{
-      number:"",
-      getcode:"",
+      number: "",
+      getcode: "",
+      checkcode: "",
+      image_code_url: "",
+      uuid: "",
     }
   },
-  created(){
+  created() {
+  },
+  mounted() {
+    this.generate_image_code();
   },
   methods: {
+    generate_image_code() {
+      // 生成UUID。generateUUID() : 封装在common.js文件中，需要提前引入
+      this.uuid = uuidv4();
+      // 拼接图形验证码请求地址
+      this.image_code_url = 'https://sfi.cuhk.edu.cn/dashboard/resource/image_code/' + this.uuid;
+    },
     loginBtn(){
-      if(this.number && this.getcode){
+      if(this.number && this.getcode && this.checkcode){
         this.$http.post('/user/login',{
           username: this.number,
-          password: this.getcode
+          password: this.getcode,
+          checkcode: this.checkcode,
+          uuid: this.uuid,
         }).then(res=>{
-          // this.$router.replace(`/mainpage?username=${this.number}`)
           if(res.code == 200){
             this.$router.replace(`/mainpage?username=${this.number}`)
           }else {
@@ -99,7 +124,7 @@ img{
 
 .inner{
   width: 330px;
-  height: 400px;
+  height: 500px;
   background: rgba(0,0,0,0.3);
   box-shadow: 0 4px 4px 0 rgb(35, 32, 45);
   position: absolute;
@@ -188,11 +213,18 @@ img{
     align-items: center;
     border: 1px solid #ccc;
     padding: 0 8px;
-    box-sizing: border-box;
-    
+    box-sizing: border-box;  
+}
+.login-number-box-ex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .login-number-box .login-icon{
   width: 14px;
+}
+.login-number-box .login-code{
+  width: 100px;
 }
 .login-number-box input{
   border:none;

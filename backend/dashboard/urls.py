@@ -9,6 +9,8 @@ urlpatterns = [
     path('user/login', views.Logic().login, name='login'),
     # 登出
     path('user/logout', views.Logic().logout, name='logout'),
+    # 获取验证码图片
+    path('resource/image_code/<str:code_uuid>', views.Logic().get_image_code, name='get_image_code'),
     # 检索雇主是否存在
     path('resource/get_employer/<str:employer>', views.Logic().get_employer, name='get_employer'),
     # 获取雇主总数量

@@ -1,6 +1,7 @@
 import os
 import time
 
+import gvcode
 import pyecharts.options as opts
 from pyecharts.charts import Map, Bar, Timeline
 from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED
@@ -13,6 +14,8 @@ from django.utils.decorators import method_decorator
 
 from dashboard import models
 
+
+total_dict = {}
 
 class Compute(object):
     def compute_province_per(self, country, year):
@@ -64,6 +67,13 @@ class Logic(object):
         if request.method == "POST":
             username = request.POST.get("username")
             password = request.POST.get("password")
+            checkcode = request.POST.get("checkcode")
+            code_uuid = request.POST.get("uuid")
+            if checkcode.lower() != total_dict[str(code_uuid)].lower():
+                return JsonResponse({
+                    "code": 404,
+                    "data": "验证码错误"
+                })
             user = authenticate(username=username,password=password)
             if not user:
                 return JsonResponse({
@@ -115,6 +125,16 @@ class Logic(object):
                 "code": 500,
                 "data": "服务端异常"
             })
+
+    def get_image_code(self, request, code_uuid):
+        """获取验证码图片"""
+        image, text = gvcode.generate()
+        print(text)
+        image.save('./dashboard/checkcode-img/{text}.jpg'.format(text=text))
+        total_dict[str(code_uuid)] = text
+        with open('./dashboard/checkcode-img/{text}.jpg'.format(text=text), 'rb') as f:
+            image_data = f.read()
+        return HttpResponse(image_data, content_type='image/jpg')
 
     # @method_decorator(login_required())
     def get_employer(self, request, employer):
@@ -371,34 +391,44 @@ class Logic(object):
 
     def generate_map_of_top_city(self):
         """生成一线/新一线HTML文件"""
+        print("### Top cipy: {}###".format("新一线"))
+        year_list = [i.year for i in models.Data.objects.all().distinct("year")]
+        print("### Yearlist: {} ###".format(year_list))
+
         top_city_list = [
             "北京市", "上海市", "广州市", "深圳市",
             "成都市", "重庆市", "杭州市", "西安市", "武汉市",
             "苏州市", "郑州市", "南京市", "天津市", "长沙市",
             "东莞市", "宁波市", "佛山市", "合肥市", "青岛市"
         ]
-        per_list = []
-        for city in top_city_list:
-            print(city)
-            pos_count = models.Data.objects.filter(work_location=city).count()
-            employer_count = models.Data.objects.filter(work_location=city).distinct("employer").count()
-            if not pos_count or not employer_count:
-                per_list.append(0)
-                continue
-            per_list.append(round(pos_count / employer_count, 1))
-        print("per_list: {}".format(per_list))
+        time_line = Timeline()
+        for year in year_list:
+            per_list = []
+            for city in top_city_list:
+                print(city)
+                city_year_data = models.Data.objects.filter(work_location=city).filter(year=year)
+                pos_count = city_year_data.count()
+                employer_count = city_year_data.distinct("employer").count()
+                if not pos_count or not employer_count:
+                    per_list.append(0)
+                    continue
+                per_list.append(round(pos_count / employer_count, 1))
+            print("per_list: {}".format(per_list))
 
-        d_bar = (
-            Bar()
-            .add_xaxis(top_city_list)
-            .add_yaxis("每上市公司平均招聘量", per_list)
-            .set_global_opts(
-                title_opts=opts.TitleOpts(title="一线/新一线城市每上市公司平均招聘量", subtitle=""),
-                xaxis_opts=opts.AxisOpts(name="城市名称"),
-                yaxis_opts=opts.AxisOpts(name="每上市公司平均招聘量")
+            d_bar = (
+                Bar()
+                .add_xaxis(top_city_list)
+                .add_yaxis("每上市公司平均招聘量", per_list)
+                .set_global_opts(
+                    title_opts=opts.TitleOpts(title="一线/新一线城市每上市公司平均招聘量", subtitle=""),
+                    xaxis_opts=opts.AxisOpts(name="城市名称"),
+                    yaxis_opts=opts.AxisOpts(name="每上市公司平均招聘量")
+                )
+                # .render(self.save_path + self.file_name.format(file_name="新一线"))
             )
-            .render(self.save_path + self.file_name.format(file_name="新一线"))
-        )
+            time_line.add(d_bar, year)
+        time_line.add_schema(is_auto_play=False, play_interval=1000)
+        time_line.render(self.save_path + self.file_name.format(file_name="新一线"))
 
     def generate_map_of_top_rise(self):
         """生成需求增加最快的15种岗位"""
@@ -457,7 +487,7 @@ class Logic(object):
                 xaxis_opts=opts.AxisOpts(name="职位"),
                 yaxis_opts=opts.AxisOpts(name="增长率")
             )
-            .render(self.save_path + self.file_name.format(file_name="增长最快"))
+            .render(self.save_path + self.file_name.format(file_name="下降最快"))
         )
 
     def tool_load_data(self, request):
@@ -615,6 +645,7 @@ class Logic(object):
         _start = time.time()
         print("Begin: job_generate_map_of_rise_reduce")
         title_list = [i.title for i in models.Data.objects.distinct("title")]
+        total_title = len(title_list)
         per_list = list()
         map_dict = dict()
 
@@ -623,7 +654,7 @@ class Logic(object):
         for per, title in executor.map(Compute().compute_rise_per, title_list):
             per_list.append(per)
             map_dict[str(per)] = title
-            print(_num, title, per)
+            print(_num, "/", total_title, title, per)
             _num += 1
 
         per_list.sort()
