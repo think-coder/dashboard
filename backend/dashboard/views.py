@@ -108,7 +108,6 @@ class Logic(object):
         if request.method == "POST":
             username = request.POST.get("username")
             password = request.POST.get("password")
-            print(username, password)
             if not User.objects.filter(username=username):
                 user = User.objects.create_user(username=username, password=password)
                 return JsonResponse({
@@ -129,7 +128,6 @@ class Logic(object):
     def get_image_code(self, request, code_uuid):
         """获取验证码图片"""
         image, text = gvcode.generate()
-        print(text)
         image.save('./dashboard/checkcode-img/{text}.jpg'.format(text=text))
         total_dict[str(code_uuid)] = text
         with open('./dashboard/checkcode-img/{text}.jpg'.format(text=text), 'rb') as f:
@@ -405,7 +403,7 @@ class Logic(object):
         for year in year_list:
             per_list = []
             for city in top_city_list:
-                print(city)
+                print("city: {}".format(city))
                 city_year_data = models.Data.objects.filter(work_location=city).filter(year=year)
                 pos_count = city_year_data.count()
                 employer_count = city_year_data.distinct("employer").count()

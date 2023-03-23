@@ -54,11 +54,17 @@
     <el-tab-pane label="一线/新一线" name="4">
       <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"/></div>
     </el-tab-pane>
-    <el-tab-pane label="增长最快" name="5">
-      <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div>
+    <el-tab-pane label="增长最快岗位" name="5">
+      <!-- <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div> -->
+      <div>Coding ......</div>
     </el-tab-pane>
-    <el-tab-pane label="下降最快" name="6">
-      <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div>
+    <el-tab-pane label="下降最快岗位" name="6">
+      <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
+      <div>Coding ......</div>
+    </el-tab-pane>
+    <el-tab-pane label="行业技能需求分布" name="7">
+      <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
+      <div>Coding ......</div>
     </el-tab-pane>
   </el-tabs>
   <div class="logout" @click="outlogFn">登出</div>
@@ -152,12 +158,14 @@ import RefreshList from "./RefreshList.vue";
           this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/中国"
         } else if(newval == 3){
           console.log(this.province,'province')
-          this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.province}`
+          this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_province/${this.province}`
         }else if(newval == 4){
           this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_top_city"    
         }else if(newval == 5){
           this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_top_rise"
         }else if(newval == 6){
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_tail_reduce"
+        }else if(newval == 7){
           this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_tail_reduce"
         }
       } 
@@ -249,7 +257,7 @@ import RefreshList from "./RefreshList.vue";
       },
       handleProviceMap(e){
         this.province = e.name
-        this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.province}`
+        this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_province/${this.province}`
       },
       outlogFn(){
         this.$http.post('/user/logout',{
