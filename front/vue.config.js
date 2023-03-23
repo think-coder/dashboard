@@ -1,6 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
-const path = require('path')
-const fs = require('fs')
+
 
 module.exports = defineConfig({
   // publicPath: process.env.NODE_ENV === "production" ? "/dashboard/" : "/",
