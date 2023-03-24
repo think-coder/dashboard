@@ -21,6 +21,8 @@ urlpatterns = [
     path('resource/get_total_by_employer/<str:employer>', views.Logic().get_total_by_employer, name='get_total_by_employer'),
     # 获取某雇主下，区间招聘信息内容
     path('resource/get_employer_data_by_limit/<str:employer>/<int:page>/<int:num>', views.Logic().get_employer_data_by_limit, name='get_employer_data_by_limit'),
+    # 获取所有国家
+    path('resource/get_all_country', views.Logic().get_all_country, name='get_all_country'),
     # 获取所有省份
     path('resource/get_all_province', views.Logic().get_all_province, name='get_all_province'),
     # 获取省份下所有城市

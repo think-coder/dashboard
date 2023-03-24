@@ -41,8 +41,13 @@
         </div>
       </div>
     </el-tab-pane>
-    <el-tab-pane label="全国招聘数据" name="2">
-      <div v-if="activeName==2"><HtmlPanel :mapSrc="mapSrc"/></div>
+    <el-tab-pane label="国级招聘数据" name="2">
+      <!-- <div v-if="activeName==2"><HtmlPanel :mapSrc="mapSrc"/></div> -->
+      <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleCountryMap">
+        <el-tab-pane v-for="(item, index) in allCountry" :label="item" :key="index" :name="item">
+          <div v-if="activeName==2 && item==country"><HtmlPanel :mapSrc="mapSrc" /></div>
+        </el-tab-pane>
+      </el-tabs>
     </el-tab-pane>
     <el-tab-pane label="省级招聘数据" name="3" >
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleProviceMap">
@@ -51,20 +56,20 @@
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
-    <el-tab-pane label="一线/新一线" name="4">
+    <el-tab-pane label="一线/新一线城市" name="4">
       <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"/></div>
     </el-tab-pane>
     <el-tab-pane label="增长最快岗位" name="5">
       <!-- <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div> -->
-      <div>Coding ......</div>
+      <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
     <el-tab-pane label="下降最快岗位" name="6">
       <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
-      <div>Coding ......</div>
+      <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
     <el-tab-pane label="行业技能需求分布" name="7">
       <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
-      <div>Coding ......</div>
+      <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
   </el-tabs>
   <div class="logout" @click="outlogFn">登出</div>
@@ -84,6 +89,8 @@ import RefreshList from "./RefreshList.vue";
         tabPosition: 'left',
         allProvince:[],
         province:'上海市',
+        allCountry: [],
+        country: '',
         loading: false,
         searchData: '',
         searchLoading: false,
@@ -155,7 +162,9 @@ import RefreshList from "./RefreshList.vue";
       },
       'activeName'(newval){
         if(newval == 2){
-          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/中国"
+          // this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/中国"
+          this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.country}`
+          console.log(this.country,'country')
         } else if(newval == 3){
           console.log(this.province,'province')
           this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_province/${this.province}`
@@ -174,7 +183,8 @@ import RefreshList from "./RefreshList.vue";
       this.indexLeftData(this.leftPageNum, this.leftPageLimt)                            
     },
     mounted(){
-      this.getAllProvince()
+      this.getAllProvince(),
+      this.getAllCountry()
     },
     methods: {
       handleClick(tab, event) {
@@ -246,7 +256,7 @@ import RefreshList from "./RefreshList.vue";
         this.$alert(row.pos_text, '任职要求', {
         });
       },
-      // 获取全国省份
+      // 获取省份
       getAllProvince(){
         this.$http.get('/resource/get_all_province').then(res=>{
           this.allProvince = res.data
@@ -254,6 +264,19 @@ import RefreshList from "./RefreshList.vue";
         }).catch(()=>{
           alert('接口错误！')
         })
+      },
+      // 获取国家
+      getAllCountry(){
+        this.$http.get('/resource/get_all_country').then(res=>{
+          this.allCountry = res.data
+          this.country = res.data[0]
+        }).catch(()=>{
+          alert('接口错误！')
+        })
+      },
+      handleCountryMap(e){
+        this.country = e.name
+        this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.country}`
       },
       handleProviceMap(e){
         this.province = e.name

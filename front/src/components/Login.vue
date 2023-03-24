@@ -29,12 +29,11 @@
           <div class="login-number-box-ex">
             <img class="login-code" :src="image_code_url" @click="generate_image_code" alt="" rel="noreferrer">
           </div>
-
         </div>
         <button class="login-btn" @click="loginBtn" >登录</button>
-        <!-- <div class="account-box">
+        <div class="account-box">
           没有账户？<span @click="goRegister">马上注册</span>
-        </div> -->
+        </div>
       </div>
     </div>
     

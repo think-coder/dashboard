@@ -17,7 +17,14 @@
           <div class="input-title">密码</div>
           <div class="login-number-box">
             <img class="login-icon" src="../assets/images/l-password.png" alt="">
-            <input type="text" v-model="getcode" placeholder="请输入密码">
+            <input type="password" v-model="getcode" placeholder="请输入密码">
+          </div>
+        </div>
+        <div class="login-code-box">
+          <div class="input-title">确认密码</div>
+          <div class="login-number-box">
+            <img class="login-icon" src="../assets/images/l-password.png" alt="">
+            <input type="password" v-model="getcode_recheck" placeholder="请输入密码">
           </div>
         </div>
         <button class="login-btn" @click="RegisterBtn" >注册</button>
@@ -35,8 +42,12 @@
 export default {
   data(){
     return{
-      number:"",
-      getcode:"",
+      number: "",
+      getcode: "",
+      checkcode: "",
+      image_code_url: "",
+      uuid: "",
+      getcode_recheck: ""
     }
   },
   watch:{
@@ -50,25 +61,34 @@ export default {
     'getcode'(newval) {
       if (newval.length !== 0) {
       }
+    },
+    //确认密码
+    'getcode_recheck'(newval) {
+      if (newval.length !== 0) {
+      }
     }
   },
   created(){
   },
   methods: {
     RegisterBtn(){
-      if(this.number && this.getcode){
-        this.$http.post('/user/registry',{
-          username: this.number,
-          password: this.getcode
-        }).then(res=>{
-          console.log(res,' 注册')
-          if(res.code == 200){
-            this.$router.replace('/')
-            alert(res.data)
-          }else {
-            alert(res.data)
-          }
-        })
+      if(this.number && this.getcode && this.getcode_recheck){
+        if (this.getcode != this.getcode_recheck) {
+          alert('密码不一致，请重新输入！')
+        } else {
+          this.$http.post('/user/registry',{
+            username: this.number,
+            password: this.getcode
+          }).then(res=>{
+            console.log(res,' 注册')
+            if(res.code == 200){
+              this.$router.replace('/')
+              alert(res.data)
+            }else {
+              alert(res.data)
+            }
+          })
+        }
       } else {
         alert('请将注册信息填写完整！')
       }
@@ -92,7 +112,7 @@ export default {
 
 .inner{
   width: 330px;
-  height: 400px;
+  height: 500px;
   background: rgba(0,0,0,0.3);
   box-shadow: 0 4px 4px 0 rgb(35, 32, 45);
   position: absolute;

@@ -208,6 +208,15 @@ class Logic(object):
         })
 
     # @method_decorator(login_required())
+    def get_all_country(self, request):
+        """获取所有国家名称"""
+        province_list = ["中国"]
+
+        return JsonResponse({
+            "data": province_list
+        })
+
+    # @method_decorator(login_required())
     def get_all_province(self, request):
         """获取所有省份名称"""
         res_data = models.ProvinceCityMap.objects.all().distinct("province")
