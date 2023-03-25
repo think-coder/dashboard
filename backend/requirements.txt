@@ -7,6 +7,8 @@ Django==4.0
 django-apscheduler==0.6.2
 django-cors-headers==3.14.0
 django-extensions==3.2.1
+django-ranged-response==0.2.0
+django-simple-captcha==0.5.17
 django-sslserver==0.22
 django-werkzeug-debugger-runserver==0.3.1
 echarts-china-cities-pypkg==0.0.9
@@ -16,9 +18,12 @@ echarts-china-provinces-pypkg==0.0.3
 echarts-cities-pypkg==0.0.1
 echarts-countries-pypkg==0.1.6
 echarts-united-kingdom-pypkg==0.0.1
+graphic-verification-code==1.1.1
+gvcode==1.0.3
 Jinja2==3.1.2
 lml==0.0.2
 MarkupSafe==2.1.2
+Pillow==9.4.0
 prettytable==3.6.0
 psycopg2==2.9.5
 pycparser==2.21
