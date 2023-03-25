@@ -13,31 +13,39 @@
             </div>
           </refresh-list>
         </div>
-        <div>
+        <div class="data-list-con">
           <div class="index-content">
-            <el-table :data="rightPageData" style="width: 100%;overflow:scroll">
-              <el-table-column :fixed="index===1" v-for="(item, index) in tableHeader" :key="index" :prop="item.prop" :label="item.label" width="160"></el-table-column>
+            <el-table :data="rightPageData">
+              <el-table-column 
+                :fixed="index===1" 
+                v-for="(item, index) in tableHeader" 
+                :key="index" 
+                :prop="item.prop" 
+                :label="item.label" 
+                width="160">
+              </el-table-column>
               <el-table-column
                 fixed="right"
                 label="操作"
-                width="160">
+                width="160" >
                     <template slot-scope="scope">
                       <el-button slot="reference" type="text" size="small" @click="handleClickZzDetail(scope.row)">职责范围</el-button>
                       <el-button slot="reference" type="text" size="small" @click="handleClickRzDetail(scope.row)">任职要求</el-button>
                     </template>
               </el-table-column>
             </el-table>
-            
           </div>
-          <el-pagination
-            @current-change="handleCurrentChange"
-            :current-page="rightPageNum"
-            :page-size="rightPageLimt"
-            layout="total, prev, pager, next, jumper"
-            :total="rightTotal"
-            background
-            class="pagination-comp">
-          </el-pagination>
+          <div class="split-page">
+            <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page="rightPageNum"
+              :page-size="rightPageLimt"
+              layout="total, prev, pager, next, jumper"
+              :total="rightTotal"
+              background
+              class="pagination-comp">
+            </el-pagination>
+          </div>
         </div>
       </div>
     </el-tab-pane>
@@ -97,12 +105,12 @@ import RefreshList from "./RefreshList.vue";
         leftPageData:[],
         leftTotal:0,
         leftPageNum: 1,
-        leftPageLimt: 50,
+        leftPageLimt: 30,
         curLeftData:'',
         rightPageData:[],
         rightTotal:0,
         rightPageNum: 1,
-        rightPageLimt: 15,
+        rightPageLimt: 10,
         mapSrc:'',
         tableHeader:[{
           prop:"股票代码",
@@ -223,7 +231,7 @@ import RefreshList from "./RefreshList.vue";
       getCheckedData(item){
         this.curLeftData = item
         this.rightPageNum = 1
-        this.rightPageLimt = 50
+        this.rightPageLimt = 10
         this.getRightData(item,this.rightPageNum,this.rightPageLimt)
       },
       // 左侧加载
@@ -318,6 +326,7 @@ import RefreshList from "./RefreshList.vue";
   }
   .index-wrap{
     width: 100%;
+    height: 950px;
     display: flex;
   }
   .refresh-list-con {
@@ -327,13 +336,25 @@ import RefreshList from "./RefreshList.vue";
     background: #fff;
     display: inline-block;
     vertical-align: middle;
-    width:16%;
-    height:990px;
+    width:15%;
+    height:900px;
     padding: 20px;
     box-sizing: border-box;
     flex-shrink: 0;
   }
-
+  .data-list-con {
+    border: 1px solid #EBEEF5;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    width:85%;
+    height:900px;
+    padding: 20px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
   .item-con{
     width: 254px;
   }
@@ -355,12 +376,20 @@ import RefreshList from "./RefreshList.vue";
   }
   .index-content{
     width: 1600px;
-    height: 90%;
+    height: 800px;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  .split-page{
+    width: 1600px;
+    height: 100px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     padding: 0 20px;
     box-sizing: border-box;
   }
   .pagination-comp{
-    margin-top: 50px;
+    /* margin-top: 50px; */
     display: flex;
     justify-content: center;
   }

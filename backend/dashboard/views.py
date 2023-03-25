@@ -60,7 +60,8 @@ class Compute(object):
 class Logic(object):
     def __init__(self):
         self.file_name = "{file_name}.html"
-        self.save_path = "./dashboard/templates/"
+        self.save_path = "/root/dashboard/backend/dashboard/templates/"
+        self.checkcode_img_path = "/root/dashboard/backend/dashboard/checkcode-img/{text}.jpg"
 
     def login(self, request):
         """用户登录"""
@@ -70,10 +71,13 @@ class Logic(object):
             checkcode = request.POST.get("checkcode")
             code_uuid = request.POST.get("uuid")
             if checkcode.lower() != total_dict[str(code_uuid)].lower():
+                total_dict.clear()
                 return JsonResponse({
                     "code": 404,
                     "data": "验证码错误"
                 })
+            
+            total_dict.clear()
             user = authenticate(username=username,password=password)
             if not user:
                 return JsonResponse({
@@ -128,9 +132,9 @@ class Logic(object):
     def get_image_code(self, request, code_uuid):
         """获取验证码图片"""
         image, text = gvcode.generate()
-        image.save('./dashboard/checkcode-img/{text}.jpg'.format(text=text))
+        image.save(self.checkcode_img_path.format(text=text))
         total_dict[str(code_uuid)] = text
-        with open('./dashboard/checkcode-img/{text}.jpg'.format(text=text), 'rb') as f:
+        with open(self.checkcode_img_path.format(text=text), 'rb') as f:
             image_data = f.read()
         return HttpResponse(image_data, content_type='image/jpg')
 
