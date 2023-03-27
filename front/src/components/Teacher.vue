@@ -43,19 +43,19 @@
                 </th>
             </tr>
             <tr>
-                <th class="content-box" colspan="2">对授课老师的总体评分</th>
+                <th class="content-box" colspan="2">对课程质量的总体评分</th>
                 <th class="content-box">
-                    （<input v-model="score_course" class="style-static" />）<span>满分100</span>
+                    （<input v-model="score_course" type="number" oninput="if(value.length>3)value=value.slice(0,3)" max=100 min=1 class="style-static" />）<span>满分100</span>
                 </th>
             </tr>
             <tr>
-                <th class="content-box" colspan="2">对授课老师的总体评分</th>
+                <th class="content-box" colspan="2">您对本课程的总体评价</th>
                 <th class="content-box">
-                    <textarea v-model="course_txt" class="style-static" cols="30" rows="10"></textarea>
+                    <textarea v-model="course_txt" type="number" oninput="if(value.length>3)value=value.slice(0,3)" max=100 min=1 class="style-static" cols="30" rows="10"></textarea>
                 </th>
             </tr>
             <tr>
-                <th class="content-box" colspan="2">对授课老师的总体评分</th>
+                <th class="content-box" colspan="2">您对本次课程的建议</th>
                 <th class="content-box">
                     <textarea v-model="course_advice" class="style-static" cols="30" rows="10"></textarea>
                 </th>
@@ -304,6 +304,7 @@ input{
 .gridtable .content-box{
     background: none;
     border-top: 0;
+    text-align: left;
 }
 .gridtable .content-box:first-child{
     border-top: 0;
