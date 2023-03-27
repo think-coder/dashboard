@@ -1,8 +1,8 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true
 const request = axios.create({
-  // baseURL: 'http://10.26.9.1:58000',
-  baseURL: 'https://sfi.cuhk.edu.cn/dashboard/',
+  // baseURL: 'https://27771d60l7.zicp.fun',
+  baseURL: 'https://27771d60l7.zicp.fun',//'https://sfi.cuhk.edu.cn/dashboard/',
   timeout: 50000,
   // retry:2,
   // retryDelay:1000

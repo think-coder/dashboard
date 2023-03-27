@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import Login from '../components/Login'
 import Register from '../components/Register'
 import MainPage from '../components/HelloWorld'
+import Teacher from '../components/Teacher'
 
 // 2. 把 VueRouter 安装为 Vue 项目的插件
 // Vue.use() 函数的作用，就是来安装插件的
@@ -35,6 +36,11 @@ const router = new VueRouter({
             name: 'Register',
             component: Register
             
+        },
+        {
+            path: '/teacher',
+            name: 'Teacher',
+            component: Teacher
         }
     ]
 })
