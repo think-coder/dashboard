@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/tianjin.js"></script>
 
 </head>
-<body >
-    <div id="76dbd903c05c4a7cbde526f728c71847" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="13d77b41a4324fbcb4083b032b22fbbb" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_76dbd903c05c4a7cbde526f728c71847 = echarts.init(
-            document.getElementById('76dbd903c05c4a7cbde526f728c71847'), 'white', {renderer: 'canvas'});
-        var option_76dbd903c05c4a7cbde526f728c71847 = {
+        var chart_13d77b41a4324fbcb4083b032b22fbbb = echarts.init(
+            document.getElementById('13d77b41a4324fbcb4083b032b22fbbb'), 'white', {renderer: 'canvas'});
+        var option_13d77b41a4324fbcb4083b032b22fbbb = {
     "baseOption": {
         "series": [
             {
@@ -940,7 +947,16 @@
         }
     ]
 };
-        chart_76dbd903c05c4a7cbde526f728c71847.setOption(option_76dbd903c05c4a7cbde526f728c71847);
+        chart_13d77b41a4324fbcb4083b032b22fbbb.setOption(option_13d77b41a4324fbcb4083b032b22fbbb);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

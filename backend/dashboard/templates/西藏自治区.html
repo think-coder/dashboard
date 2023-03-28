@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/xizang.js"></script>
 
 </head>
-<body >
-    <div id="743bdb27bb2a453c8a2cc4cbac43a033" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="3a222cb8d0f14c4382c1af62aa635741" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_743bdb27bb2a453c8a2cc4cbac43a033 = echarts.init(
-            document.getElementById('743bdb27bb2a453c8a2cc4cbac43a033'), 'white', {renderer: 'canvas'});
-        var option_743bdb27bb2a453c8a2cc4cbac43a033 = {
+        var chart_3a222cb8d0f14c4382c1af62aa635741 = echarts.init(
+            document.getElementById('3a222cb8d0f14c4382c1af62aa635741'), 'white', {renderer: 'canvas'});
+        var option_3a222cb8d0f14c4382c1af62aa635741 = {
     "baseOption": {
         "series": [
             {
@@ -960,7 +967,16 @@
         }
     ]
 };
-        chart_743bdb27bb2a453c8a2cc4cbac43a033.setOption(option_743bdb27bb2a453c8a2cc4cbac43a033);
+        chart_3a222cb8d0f14c4382c1af62aa635741.setOption(option_3a222cb8d0f14c4382c1af62aa635741);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

@@ -27,6 +27,13 @@ class Data(models.Model):
         db_table = "data"
 
 
+class YearList(models.Model):
+    year = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "year_list"
+
+
 class ProvinceCityMap(models.Model):
     province = models.CharField(max_length=256)
     city = models.CharField(max_length=256)

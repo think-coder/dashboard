@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/henan.js"></script>
 
 </head>
-<body >
-    <div id="3fa5d228960f4914a3228928cd26dc12" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="b21e7e3d87ba449aa72890b215996f72" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_3fa5d228960f4914a3228928cd26dc12 = echarts.init(
-            document.getElementById('3fa5d228960f4914a3228928cd26dc12'), 'white', {renderer: 'canvas'});
-        var option_3fa5d228960f4914a3228928cd26dc12 = {
+        var chart_b21e7e3d87ba449aa72890b215996f72 = echarts.init(
+            document.getElementById('b21e7e3d87ba449aa72890b215996f72'), 'white', {renderer: 'canvas'});
+        var option_b21e7e3d87ba449aa72890b215996f72 = {
     "baseOption": {
         "series": [
             {
@@ -1388,7 +1395,16 @@
         }
     ]
 };
-        chart_3fa5d228960f4914a3228928cd26dc12.setOption(option_3fa5d228960f4914a3228928cd26dc12);
+        chart_b21e7e3d87ba449aa72890b215996f72.setOption(option_b21e7e3d87ba449aa72890b215996f72);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

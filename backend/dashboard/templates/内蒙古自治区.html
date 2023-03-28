@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/neimenggu.js"></script>
 
 </head>
-<body >
-    <div id="a727679e39594ea8ae7e185bc57cf1bf" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="994c19cef6b44d6cb5fb0b6b8a3cff7b" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_a727679e39594ea8ae7e185bc57cf1bf = echarts.init(
-            document.getElementById('a727679e39594ea8ae7e185bc57cf1bf'), 'white', {renderer: 'canvas'});
-        var option_a727679e39594ea8ae7e185bc57cf1bf = {
+        var chart_994c19cef6b44d6cb5fb0b6b8a3cff7b = echarts.init(
+            document.getElementById('994c19cef6b44d6cb5fb0b6b8a3cff7b'), 'white', {renderer: 'canvas'});
+        var option_994c19cef6b44d6cb5fb0b6b8a3cff7b = {
     "baseOption": {
         "series": [
             {
@@ -1188,7 +1195,16 @@
         }
     ]
 };
-        chart_a727679e39594ea8ae7e185bc57cf1bf.setOption(option_a727679e39594ea8ae7e185bc57cf1bf);
+        chart_994c19cef6b44d6cb5fb0b6b8a3cff7b.setOption(option_994c19cef6b44d6cb5fb0b6b8a3cff7b);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

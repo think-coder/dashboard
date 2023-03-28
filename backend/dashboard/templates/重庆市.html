@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/chongqing.js"></script>
 
 </head>
-<body >
-    <div id="2928a63748cd488a9e8f5a333338e19f" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="ff3c0667c3e1420a9abe5c01d4a79ad5" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_2928a63748cd488a9e8f5a333338e19f = echarts.init(
-            document.getElementById('2928a63748cd488a9e8f5a333338e19f'), 'white', {renderer: 'canvas'});
-        var option_2928a63748cd488a9e8f5a333338e19f = {
+        var chart_ff3c0667c3e1420a9abe5c01d4a79ad5 = echarts.init(
+            document.getElementById('ff3c0667c3e1420a9abe5c01d4a79ad5'), 'white', {renderer: 'canvas'});
+        var option_ff3c0667c3e1420a9abe5c01d4a79ad5 = {
     "baseOption": {
         "series": [
             {
@@ -940,7 +947,16 @@
         }
     ]
 };
-        chart_2928a63748cd488a9e8f5a333338e19f.setOption(option_2928a63748cd488a9e8f5a333338e19f);
+        chart_ff3c0667c3e1420a9abe5c01d4a79ad5.setOption(option_ff3c0667c3e1420a9abe5c01d4a79ad5);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

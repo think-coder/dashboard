@@ -20,7 +20,6 @@ module.exports = defineConfig({
       .filename('dashboard/js/[name].js')
       .chunkFilename('dashboard/js/[name].js');
 
-
     config.module
       .rule('fonts')
       .test(/\.(woff2?|eot|ttf|otf)(\?.*)?$/i)
@@ -64,7 +63,7 @@ module.exports = defineConfig({
     proxy: null,
     hot: false,
     client: {
-      webSocketURL: 'wss://sfi.cuhk.edu.cn:443/dashboard/wss',
+      webSocketURL: 'wss://xray-lab.space:443/dashboard/wss',
     },
     headers: {
       'Access-Control-Allow-Origin': '*',

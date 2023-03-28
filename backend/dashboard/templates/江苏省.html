@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/jiangsu.js"></script>
 
 </head>
-<body >
-    <div id="8511a186ef7e40d89fa07503b525a4a0" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="3795e8718be2437fa884ef3ddb57cc07" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_8511a186ef7e40d89fa07503b525a4a0 = echarts.init(
-            document.getElementById('8511a186ef7e40d89fa07503b525a4a0'), 'white', {renderer: 'canvas'});
-        var option_8511a186ef7e40d89fa07503b525a4a0 = {
+        var chart_3795e8718be2437fa884ef3ddb57cc07 = echarts.init(
+            document.getElementById('3795e8718be2437fa884ef3ddb57cc07'), 'white', {renderer: 'canvas'});
+        var option_3795e8718be2437fa884ef3ddb57cc07 = {
     "baseOption": {
         "series": [
             {
@@ -1276,7 +1283,16 @@
         }
     ]
 };
-        chart_8511a186ef7e40d89fa07503b525a4a0.setOption(option_8511a186ef7e40d89fa07503b525a4a0);
+        chart_3795e8718be2437fa884ef3ddb57cc07.setOption(option_3795e8718be2437fa884ef3ddb57cc07);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+
