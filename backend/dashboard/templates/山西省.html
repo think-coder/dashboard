@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/shanxi.js"></script>
 
 </head>
-<body >
-    <div id="a7bc5edd2d874f97afb7cb981724d64b" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="43ef2fff66704f25954a315b15d68666" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_a7bc5edd2d874f97afb7cb981724d64b = echarts.init(
-            document.getElementById('a7bc5edd2d874f97afb7cb981724d64b'), 'white', {renderer: 'canvas'});
-        var option_a7bc5edd2d874f97afb7cb981724d64b = {
+        var chart_43ef2fff66704f25954a315b15d68666 = echarts.init(
+            document.getElementById('43ef2fff66704f25954a315b15d68666'), 'white', {renderer: 'canvas'});
+        var option_43ef2fff66704f25954a315b15d68666 = {
     "baseOption": {
         "series": [
             {
@@ -1180,7 +1187,16 @@
         }
     ]
 };
-        chart_a7bc5edd2d874f97afb7cb981724d64b.setOption(option_a7bc5edd2d874f97afb7cb981724d64b);
+        chart_43ef2fff66704f25954a315b15d68666.setOption(option_43ef2fff66704f25954a315b15d68666);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

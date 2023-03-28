@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/anhui.js"></script>
 
 </head>
-<body >
-    <div id="342cab98d7164776ad08b8e41dfb0213" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="1b305c89c191417287796cdc557a6872" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_342cab98d7164776ad08b8e41dfb0213 = echarts.init(
-            document.getElementById('342cab98d7164776ad08b8e41dfb0213'), 'white', {renderer: 'canvas'});
-        var option_342cab98d7164776ad08b8e41dfb0213 = {
+        var chart_1b305c89c191417287796cdc557a6872 = echarts.init(
+            document.getElementById('1b305c89c191417287796cdc557a6872'), 'white', {renderer: 'canvas'});
+        var option_1b305c89c191417287796cdc557a6872 = {
     "baseOption": {
         "series": [
             {
@@ -1212,7 +1219,16 @@
         }
     ]
 };
-        chart_342cab98d7164776ad08b8e41dfb0213.setOption(option_342cab98d7164776ad08b8e41dfb0213);
+        chart_1b305c89c191417287796cdc557a6872.setOption(option_1b305c89c191417287796cdc557a6872);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

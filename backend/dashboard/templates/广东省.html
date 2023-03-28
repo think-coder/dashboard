@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/guangdong.js"></script>
 
 </head>
-<body >
-    <div id="b317b2f9403e4862ae006622a962343e" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="03fca8c2c19b4e59ae863b44f6c0304c" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_b317b2f9403e4862ae006622a962343e = echarts.init(
-            document.getElementById('b317b2f9403e4862ae006622a962343e'), 'white', {renderer: 'canvas'});
-        var option_b317b2f9403e4862ae006622a962343e = {
+        var chart_03fca8c2c19b4e59ae863b44f6c0304c = echarts.init(
+            document.getElementById('03fca8c2c19b4e59ae863b44f6c0304c'), 'white', {renderer: 'canvas'});
+        var option_03fca8c2c19b4e59ae863b44f6c0304c = {
     "baseOption": {
         "series": [
             {
@@ -1500,7 +1507,16 @@
         }
     ]
 };
-        chart_b317b2f9403e4862ae006622a962343e.setOption(option_b317b2f9403e4862ae006622a962343e);
+        chart_03fca8c2c19b4e59ae863b44f6c0304c.setOption(option_03fca8c2c19b4e59ae863b44f6c0304c);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

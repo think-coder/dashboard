@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/gansu.js"></script>
 
 </head>
-<body >
-    <div id="96a7bab851ad49759c8d9c0ce58da5b7" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="9356773672824f62a2ee799816689ab6" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_96a7bab851ad49759c8d9c0ce58da5b7 = echarts.init(
-            document.getElementById('96a7bab851ad49759c8d9c0ce58da5b7'), 'white', {renderer: 'canvas'});
-        var option_96a7bab851ad49759c8d9c0ce58da5b7 = {
+        var chart_9356773672824f62a2ee799816689ab6 = echarts.init(
+            document.getElementById('9356773672824f62a2ee799816689ab6'), 'white', {renderer: 'canvas'});
+        var option_9356773672824f62a2ee799816689ab6 = {
     "baseOption": {
         "series": [
             {
@@ -1192,7 +1199,16 @@
         }
     ]
 };
-        chart_96a7bab851ad49759c8d9c0ce58da5b7.setOption(option_96a7bab851ad49759c8d9c0ce58da5b7);
+        chart_9356773672824f62a2ee799816689ab6.setOption(option_9356773672824f62a2ee799816689ab6);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

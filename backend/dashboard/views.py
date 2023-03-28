@@ -18,6 +18,41 @@ from dashboard import models
 total_dict = {}
 
 class Compute(object):
+    def __init__(self):
+        self.province_obj_map = {
+            "新疆维吾尔自治区": models.XinJiang.objects,
+            "青海省": models.QingHai.objects,
+            "湖北省": models.HuBei.objects,
+            "山西省": models.ShanXi_1.objects,
+            "云南省": models.YunNan.objects,
+            "河北省": models.HeBei.objects,
+            "广西壮族自治区": models.GuangXi.objects.all(),
+            "海南省": models.HaiNan.objects.all(),
+            "上海市": models.ShangHai.objects.all(),
+            "辽宁省": models.LiaoNing.objects.all(),
+            "福建省": models.FuJian.objects.all(),
+            "陕西省": models.ShanXi_2.objects.all(),
+            "四川省": models.SiChuan.objects.all(),
+            "贵州省": models.GuiZhou.objects.all(),
+            "广东省": models.GuangDong.objects.all(),
+            "北京市": models.BeiJing.objects.all(),
+            "黑龙江省": models.HeiLongJiang.objects.all(),
+            "江苏省": models.JiangSu.objects.all(),
+            "天津市": models.TianJin.objects.all(),
+            "重庆市": models.ChongQing.objects.all(),
+            "山东省": models.ShanDong.objects.all(),
+            "内蒙古自治区": models.NeiMengGu.objects.all(),
+            "宁夏回族自治区": models.NingXia.objects.all(),
+            "浙江省": models.ZheJiang.objects.all(),
+            "西藏自治区": models.XiZang.objects.all(),
+            "吉林省": models.JiLin.objects.all(),
+            "安徽省": models.AnHui.objects.all(),
+            "江西省": models.JiangXi.objects.all(),
+            "甘肃省": models.GanSu.objects.all(),
+            "河南省": models.HeNan.objects.all(),
+            "湖南省": models.HuNan.objects.all(),
+        }
+
     def compute_province_per(self, country, year):
         """计算国级平均招聘量"""
         data_list = models.ProvinceCityMap.objects.all().distinct("province")
@@ -36,10 +71,11 @@ class Compute(object):
         """计算省级平均招聘量"""
         data_list = models.ProvinceCityMap.objects.filter(province__icontains=province).distinct("city")
         per_list = [["", 0]]
+        province_data = self.province_obj_map.get(province)
         for data in data_list:
             city = data.city
-            pos_count = models.Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).count()
-            employer_count = models.Data.objects.filter(year=year).filter(work_province__icontains=province).filter(work_location=city).distinct("employer").count()
+            pos_count = province_data.filter(year=year).filter(work_location=city).count()
+            employer_count = province_data.filter(year=year).filter(work_location=city).distinct("employer").count()
             if not pos_count or not employer_count:
                 return per_list
             per = round(pos_count / employer_count, 1)
@@ -293,7 +329,7 @@ class Logic(object):
     def generate_country_map(self, country):
         """生成国级HTML文件"""
         print("### Country: {} ###".format(country))
-        year_list = [i.year for i in models.Data.objects.all().distinct("year")]
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
@@ -344,7 +380,7 @@ class Logic(object):
     def generate_province_map(self, province):
         """生成省级HTML文件"""
         print("### Province: {}###".format(province))
-        year_list = [i.year for i in models.Data.objects.all().distinct("year")]
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         print("### Yearlist: {} ###".format(year_list))
         time_line = Timeline()
         for year in year_list:
@@ -403,7 +439,7 @@ class Logic(object):
     def generate_map_of_top_city(self):
         """生成一线/新一线HTML文件"""
         print("### Top cipy: {}###".format("新一线"))
-        year_list = [i.year for i in models.Data.objects.all().distinct("year")]
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         print("### Yearlist: {} ###".format(year_list))
 
         top_city_list = [
@@ -704,7 +740,7 @@ class Logic(object):
         })
 
     def tool_load_data_by_year(self, request):
-        year_list = [2018, 2019, 2020, 2021, 2022]
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         for year in year_list:
             print(year)
             all_data = models.Data.objects.all().filter(year=year)

@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/guangxi.js"></script>
 
 </head>
-<body >
-    <div id="1ef4402e15024a3fb7ac8f4215f69e25" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="813085dd29674171834e984cae33052e" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_1ef4402e15024a3fb7ac8f4215f69e25 = echarts.init(
-            document.getElementById('1ef4402e15024a3fb7ac8f4215f69e25'), 'white', {renderer: 'canvas'});
-        var option_1ef4402e15024a3fb7ac8f4215f69e25 = {
+        var chart_813085dd29674171834e984cae33052e = echarts.init(
+            document.getElementById('813085dd29674171834e984cae33052e'), 'white', {renderer: 'canvas'});
+        var option_813085dd29674171834e984cae33052e = {
     "baseOption": {
         "series": [
             {
@@ -1216,7 +1223,16 @@
         }
     ]
 };
-        chart_1ef4402e15024a3fb7ac8f4215f69e25.setOption(option_1ef4402e15024a3fb7ac8f4215f69e25);
+        chart_813085dd29674171834e984cae33052e.setOption(option_813085dd29674171834e984cae33052e);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

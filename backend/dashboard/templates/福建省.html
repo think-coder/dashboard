@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/fujian.js"></script>
 
 </head>
-<body >
-    <div id="d52b302390a44cdb899b9b921d4e6efa" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="5e3fa06722fc4c0d89830d3c4c23e8e9" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_d52b302390a44cdb899b9b921d4e6efa = echarts.init(
-            document.getElementById('d52b302390a44cdb899b9b921d4e6efa'), 'white', {renderer: 'canvas'});
-        var option_d52b302390a44cdb899b9b921d4e6efa = {
+        var chart_5e3fa06722fc4c0d89830d3c4c23e8e9 = echarts.init(
+            document.getElementById('5e3fa06722fc4c0d89830d3c4c23e8e9'), 'white', {renderer: 'canvas'});
+        var option_5e3fa06722fc4c0d89830d3c4c23e8e9 = {
     "baseOption": {
         "series": [
             {
@@ -1156,7 +1163,16 @@
         }
     ]
 };
-        chart_d52b302390a44cdb899b9b921d4e6efa.setOption(option_d52b302390a44cdb899b9b921d4e6efa);
+        chart_5e3fa06722fc4c0d89830d3c4c23e8e9.setOption(option_5e3fa06722fc4c0d89830d3c4c23e8e9);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+

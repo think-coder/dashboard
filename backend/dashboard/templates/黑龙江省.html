@@ -7,12 +7,19 @@
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/heilongjiang.js"></script>
 
 </head>
-<body >
-    <div id="e25f61bf370745ff86909c4eea81cdae" class="chart-container" style="width:900px; height:500px; "></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="4a4a377a56f94102bde50c604c9034a0" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_e25f61bf370745ff86909c4eea81cdae = echarts.init(
-            document.getElementById('e25f61bf370745ff86909c4eea81cdae'), 'white', {renderer: 'canvas'});
-        var option_e25f61bf370745ff86909c4eea81cdae = {
+        var chart_4a4a377a56f94102bde50c604c9034a0 = echarts.init(
+            document.getElementById('4a4a377a56f94102bde50c604c9034a0'), 'white', {renderer: 'canvas'});
+        var option_4a4a377a56f94102bde50c604c9034a0 = {
     "baseOption": {
         "series": [
             {
@@ -1172,7 +1179,16 @@
         }
     ]
 };
-        chart_e25f61bf370745ff86909c4eea81cdae.setOption(option_e25f61bf370745ff86909c4eea81cdae);
+        chart_4a4a377a56f94102bde50c604c9034a0.setOption(option_4a4a377a56f94102bde50c604c9034a0);
+    </script>
+    <script>
+         //窗口大小变化时候，进行刷新页面操作，防止样式混乱
+         var x=window.innerWidth;
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
     </script>
 </body>
 </html>
+
