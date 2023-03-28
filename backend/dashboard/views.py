@@ -693,7 +693,9 @@ class Logic(object):
         self.generate_map_of_top_city()
         print("End: job_generate_columnar_map")
 
-        return 
+        return JsonResponse({
+            "data": "OK"
+        }) 
 
     def job_generate_map_of_rise_reduce(self, request):
         """任务: 生成需求增加/下降最快的15种岗位"""
