@@ -219,7 +219,7 @@ export default {
 
 <style scoped>
 .title{
-    width: 100px;
+    width: 12%;
 
 }
 .gridtable {
@@ -260,6 +260,7 @@ export default {
     box-sizing: border-box;
     background-color: #ffffff;
     display: block;
+    overflow: scroll;
 }
 .gridtable .tr2-tr:last-child{
     border: 0;
@@ -316,6 +317,7 @@ input{
     outline: none;
 }
 .content-box textarea{
+    width: 96%;
     border: none;
     height: 50px;
     outline: none;
@@ -334,10 +336,26 @@ input{
 }
 
 @media screen and (max-width: 750px) {
+    body, html{
+        overflow-x: scroll;
+    }
     .teacher-wrap {
         width: 100%;
         margin: 0 auto;
     }
+    .teacher-wrap {
+        position: absolute;
+        width: 100vh;
+        height: 100vw;
+        top: 0;
+        left: 250vw;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+        transform-origin: 0% 0%;
+    }
+
     .inner{
         padding: 20px;
         box-sizing: border-box;
@@ -384,4 +402,31 @@ input{
     }
     
 }
+
+/* 
+@media screen and (orientation: portrait) {
+    .teacher-wrap {
+        position: absolute;
+        width: 100vh;
+        height: 100vw;
+        top: 0;
+        left: 100vw;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+        transform-origin: 0% 0%;
+    }
+} */
+
+/* @media screen and (orientation: landscape) {
+    .teacher-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+} */
+            
 </style>
