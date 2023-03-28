@@ -20,12 +20,12 @@ total_dict = {}
 class Compute(object):
     def __init__(self):
         self.province_obj_map = {
-            "新疆维吾尔自治区": models.XinJiang.objects,
-            "青海省": models.QingHai.objects,
-            "湖北省": models.HuBei.objects,
-            "山西省": models.ShanXi_1.objects,
-            "云南省": models.YunNan.objects,
-            "河北省": models.HeBei.objects,
+            "新疆维吾尔自治区": models.XinJiang.objects.all(),
+            "青海省": models.QingHai.objects.all(),
+            "湖北省": models.HuBei.objects.all(),
+            "山西省": models.ShanXi_1.objects.all(),
+            "云南省": models.YunNan.objects.all(),
+            "河北省": models.HeBei.objects.all(),
             "广西壮族自治区": models.GuangXi.objects.all(),
             "海南省": models.HaiNan.objects.all(),
             "上海市": models.ShangHai.objects.all(),
@@ -52,15 +52,24 @@ class Compute(object):
             "河南省": models.HeNan.objects.all(),
             "湖南省": models.HuNan.objects.all(),
         }
+        self.year_obj_map = {
+            "2017": models.Year2017.objects.all(),
+            "2018": models.Year2018.objects.all(),
+            "2019": models.Year2019.objects.all(),
+            "2020": models.Year2020.objects.all(),
+            "2021": models.Year2021.objects.all(),
+            "2022": models.Year2022.objects.all(),
+        }
 
     def compute_province_per(self, country, year):
         """计算国级平均招聘量"""
         data_list = models.ProvinceCityMap.objects.all().distinct("province")
         per_list = [["", 0]]
+        year_data = self.year_obj_map.get(year)
         for data in data_list:
             province = data.province
-            pos_count = models.Data.objects.filter(year=year).filter(work_province=province).count()
-            employer_count = models.Data.objects.filter(year=year).filter(work_province=province).distinct("employer").count()
+            pos_count = year_data.filter(work_province=province).count()
+            employer_count = year_data.filter(work_province=province).distinct("employer").count()
             if not pos_count or not employer_count:
                 return per_list
             per = round(pos_count / employer_count, 1)
@@ -84,8 +93,8 @@ class Compute(object):
 
     def compute_rise_per(self, title):
         """计算增长率"""
-        left_point = models.Data.objects.filter(year='2017').filter(title=title).count()
-        right_point = models.Data.objects.filter(year='2021').filter(title=title).count()
+        left_point = self.year_obj_map.get("2017").filter(title=title).count()
+        right_point = self.year_obj_map.get("2021").filter(title=title).count()
         if not left_point or not right_point:
             per = round(right_point ** 1/4 - 1, 1)
         else:
@@ -341,7 +350,6 @@ class Logic(object):
                     series_name="每上市公司平均招聘数量",
                     maptype="china",
                     data_pair=per_list,
-
                     is_selected=True,
                     is_roam=True,
                     center=None,
@@ -483,8 +491,8 @@ class Logic(object):
         per_list = list()
         map_dict = dict()
         for i in title_list:
-            left_point = models.Data.objects.filter(year='2017').filter(title=i).count()
-            right_point = models.Data.objects.filter(year='2021').filter(title=i).count()
+            left_point = self.year_obj_map.get("2017").filter(title=i).count()
+            right_point = self.year_obj_map.get("2021").filter(title=i).count()
             if not left_point or not right_point:
                 per = round(right_point ** 1/4 - 1, 1)
             else:
@@ -513,8 +521,8 @@ class Logic(object):
         per_list = list()
         map_dict = dict()
         for i in title_list:
-            left_point = models.Data.objects.filter(year='2017').filter(title=i).count()
-            right_point = models.Data.objects.filter(year='2021').filter(title=i).count()
+            left_point = self.year_obj_map.get("2017").filter(title=i).count()
+            right_point = self.year_obj_map.get("2021").filter(title=i).count()
             if not left_point or not right_point:
                 per = round(right_point ** 1/4 - 1, 1)
             else:
