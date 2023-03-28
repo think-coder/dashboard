@@ -107,6 +107,14 @@ class Logic(object):
         self.file_name = "{file_name}.html"
         self.save_path = "/root/dashboard/backend/dashboard/templates/"
         self.checkcode_img_path = "/root/dashboard/backend/dashboard/checkcode-img/{text}.jpg"
+        self.year_obj_map = {
+            "2017": models.Year2017.objects.all(),
+            "2018": models.Year2018.objects.all(),
+            "2019": models.Year2019.objects.all(),
+            "2020": models.Year2020.objects.all(),
+            "2021": models.Year2021.objects.all(),
+            "2022": models.Year2022.objects.all(),
+        }
 
     def login(self, request):
         """用户登录"""
@@ -490,9 +498,14 @@ class Logic(object):
         title_list = [i.title for i in models.Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
+        data_2017 = self.year_obj_map.get("2017")
+        data_2021 = self.year_obj_map.get("2021")
+        _num = 0
         for i in title_list:
-            left_point = self.year_obj_map.get("2017").filter(title=i).count()
-            right_point = self.year_obj_map.get("2021").filter(title=i).count()
+            _num += 1
+            print("rise: {_num}|{_title}".format(_num=_num, _title=i))
+            left_point = data_2017.filter(title=i).count()
+            right_point = data_2021.filter(title=i).count()
             if not left_point or not right_point:
                 per = round(right_point ** 1/4 - 1, 1)
             else:
@@ -514,15 +527,21 @@ class Logic(object):
             )
             .render(self.save_path + self.file_name.format(file_name="增长最快"))
         )
+        print("End generate_map_of_top_rise")
 
     def generate_map_of_tail_reduce(self):
         """生成需求下降最快的15种岗位"""
         title_list = [i.title for i in models.Data.objects.distinct("title")]
         per_list = list()
         map_dict = dict()
+        data_2017 = self.year_obj_map.get("2017")
+        data_2021 = self.year_obj_map.get("2021")
+        _num = 0
         for i in title_list:
-            left_point = self.year_obj_map.get("2017").filter(title=i).count()
-            right_point = self.year_obj_map.get("2021").filter(title=i).count()
+            _num += 1
+            print("reduce: {_num}|{_title}".format(_num=_num, _title=i))
+            left_point = data_2017.filter(title=i).count()
+            right_point = data_2021.filter(title=i).count()
             if not left_point or not right_point:
                 per = round(right_point ** 1/4 - 1, 1)
             else:
@@ -544,6 +563,7 @@ class Logic(object):
             )
             .render(self.save_path + self.file_name.format(file_name="下降最快"))
         )
+        print("End generate_map_of_tail_reduce")
 
     def tool_load_data(self, request):
         """暂用：导入数据"""
@@ -707,7 +727,7 @@ class Logic(object):
         map_dict = dict()
 
         _num = 1
-        executor = ThreadPoolExecutor(max_workers=20)
+        executor = ThreadPoolExecutor(max_workers=48)
         for per, title in executor.map(Compute().compute_rise_per, title_list):
             per_list.append(per)
             map_dict[str(per)] = title
