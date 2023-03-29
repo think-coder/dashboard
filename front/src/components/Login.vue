@@ -63,7 +63,7 @@ export default {
       // 生成UUID。generateUUID() : 封装在common.js文件中，需要提前引入
       this.uuid = uuidv4();
       // 拼接图形验证码请求地址
-      this.image_code_url = 'https://xray-lab.space/dashboard/resource/image_code/' + this.uuid;
+      this.image_code_url = 'https://sfi.cuhk.edu.cn/dashboard/resource/image_code/' + this.uuid;
     },
     loginBtn(){
       if(this.number && this.getcode && this.checkcode){

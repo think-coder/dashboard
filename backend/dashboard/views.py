@@ -105,8 +105,8 @@ class Compute(object):
 class Logic(object):
     def __init__(self):
         self.file_name = "{file_name}.html"
-        self.save_path = "/root/dashboard/backend/dashboard/templates/"
-        self.checkcode_img_path = "/root/dashboard/backend/dashboard/checkcode-img/{text}.jpg"
+        self.save_path = "./dashboard/templates/"
+        self.checkcode_img_path = "./dashboard/checkcode-img/{text}.jpg"
         self.year_obj_map = {
             "2017": models.Year2017.objects.all(),
             "2018": models.Year2018.objects.all(),

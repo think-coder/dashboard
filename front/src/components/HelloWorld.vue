@@ -172,19 +172,19 @@ import RefreshList from "./RefreshList.vue";
       },
       'activeName'(newval){
         if(newval == 2){
-          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}`
+          this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.country}`
           console.log(this.country,'country')
         } else if(newval == 3){
           console.log(this.province,'province')
-          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
+          this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_province/${this.province}`
         }else if(newval == 4){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_city"    
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_top_city"    
         }else if(newval == 5){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_rise"
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_top_rise"
         }else if(newval == 6){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_tail_reduce"
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_tail_reduce"
         }else if(newval == 7){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_tail_reduce"
+          this.mapSrc="https://sfi.cuhk.edu.cn/dashboard/resource/get_map_of_tail_reduce"
         }
       } 
     },
@@ -285,11 +285,11 @@ import RefreshList from "./RefreshList.vue";
       },
       handleCountryMap(e){
         this.country = e.name
-        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}`
+        this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_country/${this.country}`
       },
       handleProviceMap(e){
         this.province = e.name
-        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
+        this.mapSrc=`https://sfi.cuhk.edu.cn/dashboard/resource/get_map_by_province/${this.province}`
       },
       outlogFn(){
         this.$http.post('/user/logout',{
