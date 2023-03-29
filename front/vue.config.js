@@ -63,7 +63,7 @@ module.exports = defineConfig({
     proxy: null,
     hot: false,
     client: {
-      webSocketURL: 'wss://sfi.cuhk.edu.cn:443/dashboard/wss',
+      webSocketURL: 'wss://xray-lab.space:443/dashboard/wss',
     },
     headers: {
       'Access-Control-Allow-Origin': '*',
