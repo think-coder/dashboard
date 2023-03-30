@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Awesome-pyecharts</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=yes">
             <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
         <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/china.js"></script>
 
-    <style type="text/css">
-        html, body{
-            height:100%;
-            width:100%
-        }
-    </style>
 </head>
-<body onresize="resizeFresh()">
-    <div id="c1219916a167491d86ca87351180287a" class="chart-container" style="width:95%; height:95%; margin:auto; top:30px"></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="f08f6cbac78a463b889e76259a571871" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_c1219916a167491d86ca87351180287a = echarts.init(
-            document.getElementById('c1219916a167491d86ca87351180287a'), 'white', {renderer: 'canvas'});
-        var option_c1219916a167491d86ca87351180287a = {
+        var chart_f08f6cbac78a463b889e76259a571871 = echarts.init(
+            document.getElementById('f08f6cbac78a463b889e76259a571871'), 'white', {renderer: 'canvas'});
+        var option_f08f6cbac78a463b889e76259a571871 = {
     "baseOption": {
         "series": [
             {
@@ -1787,16 +1787,16 @@
         }
     ]
 };
-        chart_c1219916a167491d86ca87351180287a.setOption(option_c1219916a167491d86ca87351180287a);
+        chart_f08f6cbac78a463b889e76259a571871.setOption(option_f08f6cbac78a463b889e76259a571871);
     </script>
     <script>
          //窗口大小变化时候，进行刷新页面操作，防止样式混乱
          var x=window.innerWidth;
-         function resizeFresh(){
-             if(x!=window.innerWidth)
-                 location.reload();
-         }
-     </script>
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
+    </script>
 </body>
 </html>
 

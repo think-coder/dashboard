@@ -42,11 +42,11 @@ urlpatterns = [
     # 获取需求增加最快的15种岗位HTML图
     path('resource/get_map_of_top_rise', views.Logic().get_map_of_top_rise, name='get_map_of_top_rise'),
     # 获取需求增加最快的15种岗位HTML图 - 数据
-    path('resource/get_data_of_top_rise', views.Logic().get_data_of_top_rise, name='get_data_of_top_rise'),
+    # path('resource/get_data_of_top_rise', views.Logic().get_data_of_top_rise, name='get_data_of_top_rise'),
     # 获取需求下降最快的15种岗位HTML图
     path('resource/get_map_of_tail_reduce', views.Logic().get_map_of_tail_reduce, name='get_map_of_tail_reduce'),
     # 获取需求下降最快的15种岗位HTML图 - 数据
-    path('resource/get_data_of_tail_reduce', views.Logic().get_data_of_tail_reduce, name='get_data_of_tail_reduce'),
+    # path('resource/get_data_of_tail_reduce', views.Logic().get_data_of_tail_reduce, name='get_data_of_tail_reduce'),
 
     # 导入数据
     path('tool/load_data', views.Logic().tool_load_data, name='tool_load_data'),

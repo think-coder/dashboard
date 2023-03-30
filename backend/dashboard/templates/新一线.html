@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Awesome-pyecharts</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=yes">
             <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
 
-    <style type="text/css">
-        html, body{
-            height:100%;
-            width:100%
-        }
-    </style>
 </head>
-<body onresize="resizeFresh()">
-    <div id="b5b15e8f38c54e15a5b4fe8908ee31b8" class="chart-container" style="width:95%; height:95%; margin:auto; top:30px"></div>
+<body οnresize="resizeFresh()">  <!-- 添加刷新函数调用 -->
+<style type="text/css">
+    html,body{
+        height:100%;
+        width:100%
+    }
+</style>
+    <div id="488185541066483f9127d0e57a733ff1" class="chart-container" style="width:75%; height:75%; margin:auto; top:30px"></div>
+
     <script>
-        var chart_b5b15e8f38c54e15a5b4fe8908ee31b8 = echarts.init(
-            document.getElementById('b5b15e8f38c54e15a5b4fe8908ee31b8'), 'white', {renderer: 'canvas'});
-        var option_b5b15e8f38c54e15a5b4fe8908ee31b8 = {
+        var chart_488185541066483f9127d0e57a733ff1 = echarts.init(
+            document.getElementById('488185541066483f9127d0e57a733ff1'), 'white', {renderer: 'canvas'});
+        var option_488185541066483f9127d0e57a733ff1 = {
     "baseOption": {
         "series": [
             {
@@ -1319,16 +1319,16 @@
         }
     ]
 };
-        chart_b5b15e8f38c54e15a5b4fe8908ee31b8.setOption(option_b5b15e8f38c54e15a5b4fe8908ee31b8);
+        chart_488185541066483f9127d0e57a733ff1.setOption(option_488185541066483f9127d0e57a733ff1);
     </script>
     <script>
          //窗口大小变化时候，进行刷新页面操作，防止样式混乱
          var x=window.innerWidth;
-         function resizeFresh(){
-             if(x!=window.innerWidth)
-                 location.reload();
-         }
-     </script>
+     function resizeFresh(){
+         if(x!=window.innerWidth)
+             location.reload();
+     }
+    </script>
 </body>
 </html>
 

@@ -74,6 +74,22 @@ class Compute(object):
                 return per_list
             per = round(pos_count / employer_count, 1)
             per_list.append([province, per])
+            # 更新数据库(有则更新，无则创建)
+            province_data = models.PercentageData.objects.all().filter(year=year).filter(country=country).filter(province=province).filter(city="ALL").first()
+            if not province_data:
+                models.PercentageData.objects.create(
+                    country=country,
+                    province=province,
+                    city="ALL",
+                    year=year,
+                    percentage=per
+                )
+                continue
+            province_data.country = country
+            province_data.province = province
+            province_data.city = "ALL"
+            province_data.year = year
+            province_data.percentage = per
         return per_list
 
     def compute_city_per(self, province, year):
@@ -89,6 +105,22 @@ class Compute(object):
                 return per_list
             per = round(pos_count / employer_count, 1)
             per_list.append([city, per])
+            # 更新数据库(有则更新，无则创建)
+            city_data = models.PercentageData.objects.all().filter(year=year).filter(country="中国").filter(province=province).filter(city=city).first()
+            if not city_data:
+                models.PercentageData.objects.create(
+                    country="中国",
+                    province=province,
+                    city=city,
+                    year=year,
+                    percentage=per
+                )
+                continue
+            province_data.country = "中国"
+            province_data.province = province
+            province_data.city = city
+            province_data.year = year
+            province_data.percentage = per
         return per_list
 
     def compute_rise_per(self, title):
@@ -115,6 +147,12 @@ class Logic(object):
             "2021": models.Year2021.objects.all(),
             "2022": models.Year2022.objects.all(),
         }
+        self.top_city_list = [
+            "北京市", "上海市", "广州市", "深圳市",
+            "成都市", "重庆市", "杭州市", "西安市", "武汉市",
+            "苏州市", "郑州市", "南京市", "天津市", "长沙市",
+            "东莞市", "宁波市", "佛山市", "合肥市", "青岛市"
+        ]
 
     def login(self, request):
         """用户登录"""
@@ -306,7 +344,18 @@ class Logic(object):
     # @method_decorator(login_required())
     def get_data_by_country(self, request, country):
         """获取国级展示图-数据"""
-        pass
+        data_dict = dict()
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
+        for year in year_list:
+            data_dict[year] = dict()
+            province_data = models.PercentageData.objects.all().filter(year=year).filter(country=country).filter(city="ALL")
+            for province in province_data:
+                data_dict[year][province.province] = province.percentage
+        
+        return JsonResponse({
+            "code": 200,
+            "data": data_dict
+        })
 
     # @method_decorator(login_required())
     def get_map_by_province(self, request, province):
@@ -321,7 +370,20 @@ class Logic(object):
     # @method_decorator(login_required())
     def get_data_by_province(self, request, province):
         """获取省级展示图-数据"""
-        pass
+        data_dict = dict()
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
+        for year in year_list:
+            data_dict[year] = dict()
+            city_data = models.PercentageData.objects.all().filter(year=year).filter(country="中国").filter(province=province)
+            for city in city_data:
+                if city.city == "ALL":
+                    continue
+                data_dict[year][city.city] = city.percentage
+        
+        return JsonResponse({
+            "code": 200,
+            "data": data_dict
+        })
 
     # @method_decorator(login_required())
     def get_map_of_top_city(self, request):
@@ -336,7 +398,20 @@ class Logic(object):
     # @method_decorator(login_required())
     def get_data_of_top_city(self, request):
         """获取一线/新一线HTML图-数据"""
-        pass
+        data_dict = dict()
+        year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
+        for year in year_list:
+            data_dict[year] = dict()
+            for city in self.top_city_list:
+                city_data = models.PercentageData.objects.all().filter(year=year).filter(country="中国").filter(city=city).first()
+                if city_data:
+                    data_dict[year][city_data.city] = city_data.percentage
+        
+        return JsonResponse({
+            "code": 200,
+            "data": data_dict
+        })
+
 
     # @method_decorator(login_required())
     def get_map_of_top_rise(self, request):
@@ -483,16 +558,10 @@ class Logic(object):
         year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         print("### Yearlist: {} ###".format(year_list))
 
-        top_city_list = [
-            "北京市", "上海市", "广州市", "深圳市",
-            "成都市", "重庆市", "杭州市", "西安市", "武汉市",
-            "苏州市", "郑州市", "南京市", "天津市", "长沙市",
-            "东莞市", "宁波市", "佛山市", "合肥市", "青岛市"
-        ]
         time_line = Timeline()
         for year in year_list:
             per_list = []
-            for city in top_city_list:
+            for city in self.top_city_list:
                 print("city: {}".format(city))
                 city_year_data = models.Data.objects.filter(work_location=city).filter(year=year)
                 pos_count = city_year_data.count()
@@ -505,7 +574,7 @@ class Logic(object):
 
             d_bar = (
                 Bar()
-                .add_xaxis(top_city_list)
+                .add_xaxis(self.top_city_list)
                 .add_yaxis("每上市公司平均招聘量", per_list)
                 .set_global_opts(
                     title_opts=opts.TitleOpts(title="一线/新一线城市每上市公司平均招聘量", subtitle=""),
