@@ -131,6 +131,10 @@ class Compute(object):
             per = round(right_point ** 1/4 - 1, 1)
         else:
             per = round((right_point / left_point) ** 1/4 - 1, 1)
+        models.PercentageTitle.objects.update_or_create(
+            title=title,
+            percentage=per
+        )
         return (per, title)
 
 
@@ -821,43 +825,43 @@ class Logic(object):
         map_dict = dict()
 
         _num = 1
-        executor = ThreadPoolExecutor(max_workers=48)
+        executor = ThreadPoolExecutor(max_workers=8)
         for per, title in executor.map(Compute().compute_rise_per, title_list):
             per_list.append(per)
             map_dict[str(per)] = title
             print(_num, "/", total_title, title, per)
             _num += 1
 
-        per_list.sort()
-        top_per_list = per_list[0:15]
-        tail_per_list = per_list[-15:]
-        top_list = [map_dict.get(str(per)) for per in top_per_list]
-        tail_list = [map_dict.get(str(per)) for per in tail_per_list]
-        rise_bar = (
-            Bar()
-            .add_xaxis(top_list)
-            .add_yaxis("每上市公司平均招聘量", top_per_list)
-            .set_global_opts(
-                title_opts=opts.TitleOpts(title="需求增长最快的15种岗位", subtitle=""),
-                xaxis_opts=opts.AxisOpts(name="职位"),
-                yaxis_opts=opts.AxisOpts(name="增长率")
-            )
-            .render(self.save_path + self.file_name.format(file_name="增长最快"))
-        )
-        reduce_bar = (
-            Bar()
-            .add_xaxis(tail_list)
-            .add_yaxis("每上市公司平均招聘量", tail_per_list)
-            .set_global_opts(
-                title_opts=opts.TitleOpts(title="需求下降最快的15种岗位", subtitle=""),
-                xaxis_opts=opts.AxisOpts(name="职位"),
-                yaxis_opts=opts.AxisOpts(name="增长率")
-            )
-            .render(self.save_path + self.file_name.format(file_name="下降最快"))
-        )
-        _end = time.time()
-        print("End: job_generate_map_of_rise_reduce")
-        print("Total: {}".format(_end - _start))
+        # per_list.sort()
+        # top_per_list = per_list[0:15]
+        # tail_per_list = per_list[-15:]
+        # top_list = [map_dict.get(str(per)) for per in top_per_list]
+        # tail_list = [map_dict.get(str(per)) for per in tail_per_list]
+        # rise_bar = (
+        #     Bar()
+        #     .add_xaxis(top_list)
+        #     .add_yaxis("每上市公司平均招聘量", top_per_list)
+        #     .set_global_opts(
+        #         title_opts=opts.TitleOpts(title="需求增长最快的15种岗位", subtitle=""),
+        #         xaxis_opts=opts.AxisOpts(name="职位"),
+        #         yaxis_opts=opts.AxisOpts(name="增长率")
+        #     )
+        #     .render(self.save_path + self.file_name.format(file_name="增长最快"))
+        # )
+        # reduce_bar = (
+        #     Bar()
+        #     .add_xaxis(tail_list)
+        #     .add_yaxis("每上市公司平均招聘量", tail_per_list)
+        #     .set_global_opts(
+        #         title_opts=opts.TitleOpts(title="需求下降最快的15种岗位", subtitle=""),
+        #         xaxis_opts=opts.AxisOpts(name="职位"),
+        #         yaxis_opts=opts.AxisOpts(name="增长率")
+        #     )
+        #     .render(self.save_path + self.file_name.format(file_name="下降最快"))
+        # )
+        # _end = time.time()
+        # print("End: job_generate_map_of_rise_reduce")
+        # print("Total: {}".format(_end - _start))
 
         return JsonResponse({
             "data": "OK"

@@ -38,6 +38,14 @@ class PercentageData(models.Model):
         db_table = "per_data"
 
 
+class PercentageTitle(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title"
+
+
 class YearList(models.Model):
     year = models.CharField(max_length=256)
 
