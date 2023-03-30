@@ -30,8 +30,8 @@ class Data(models.Model):
 class PercentageData(models.Model):
     country = models.CharField(max_length=256)
     provicne = models.CharField(max_length=256)
-    percentage = models.DecimalField(max_digits=18, decimal_places=2)
     city = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
     year = models.CharField(max_length=256)
 
     class Meta:
