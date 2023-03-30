@@ -50,10 +50,9 @@
       </div>
     </el-tab-pane>
     <el-tab-pane label="国级招聘数据" name="2">
-      <!-- <div v-if="activeName==2"><HtmlPanel :mapSrc="mapSrc"/></div> -->
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleCountryMap">
         <el-tab-pane v-for="(item, index) in allCountry" :label="item" :key="index" :name="item">
-          <div v-if="activeName==2 && item==country"><HtmlPanel :mapSrc="mapSrc" /></div>
+          <div v-if="activeName==2 && item==country"><HtmlPanel :mapSrc="mapSrc" :mapData="mapData" :tableHead="tableHead" /></div>
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
@@ -61,13 +60,13 @@
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleProviceMap">
         <el-tab-pane v-for="(item, index) in allProvince" :label="item" :key="index" :name="item">
           <div v-if="activeName==3 && item==province">
-            <HtmlPanel :mapSrc="mapSrc" />
+            <HtmlPanel :mapSrc="mapSrc" :mapData="mapData" :tableHead="tableHead"/>
           </div>
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
     <el-tab-pane label="一线/新一线城市" name="4">
-      <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"/></div>
+      <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"  :mapData="mapData" :tableHead="tableHead"/></div>
     </el-tab-pane>
     <el-tab-pane label="增长最快岗位" name="5">
       <!-- <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div> -->
@@ -154,7 +153,9 @@ import RefreshList from "./RefreshList.vue";
           prop:"雇主所在行业",
           label:"雇主所在行业"
         }],
-        visible: false
+        visible: false,
+        mapData: [],
+        tableHead: []
       };
     },
     computed: {
@@ -173,12 +174,13 @@ import RefreshList from "./RefreshList.vue";
       'activeName'(newval){
         if(newval == 2){
           this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}`
-          console.log(this.country,'country')
+          this.getMapData()
         } else if(newval == 3){
-          console.log(this.province,'province')
           this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
+          this.getProviceMapData(this.province)
         }else if(newval == 4){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_city"    
+          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_city"
+          this.getOneMapData()  
         }else if(newval == 5){
           this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_rise"
         }else if(newval == 6){
@@ -290,17 +292,60 @@ import RefreshList from "./RefreshList.vue";
       handleProviceMap(e){
         this.province = e.name
         this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
+        this.getProviceMapData(e.name)
       },
       outlogFn(){
         this.$http.post('/user/logout',{
           username: this.$route.query.username
         }).then(res=>{
-          console.log(res,' 登录')
           if(res.code == 200) this.$router.replace('/')
         }).catch(()=>{
           alert('接口错误！')
         })
+      },
+      getMapData(){
+        this.$http.get('/resource/get_all_province').then(res=>{
+          let arr = [{ prop: 'time', label: 'time'}]
+          res.data.forEach((item)=>{
+            arr.push({ prop: item, label: item })
+          })
+          this.tableHead = arr
+        }).catch(()=>{
+          alert('接口错误！')
+        })
+        this.$http.get('/resource/get_data_by_country/中国').then(res=>{
+          this.mapData = res.data
+        }).catch(()=>{
+          alert('接口错误！')
+        })
+      },
+      getProviceMapData(province){
+        this.$http.get(`https://xray-lab.space/dashboard/resource/get_data_by_province/${province}`).then(res=>{
+          let arr = []
+          Object.keys(res.data[0]).map(key => {
+            arr.push({
+              prop: key, label: key
+            })
+          })
+          this.tableHead = arr
+          this.mapData = res.data
+          console.log(this.tableHead ,this.mapData)
+        })
+      },
+      getOneMapData(){
+        this.$http.get('https://xray-lab.space/dashboard/resource/get_data_of_top_city').then(res=>{
+          let arr = []
+          Object.keys(res.data).map(key => {
+            arr.push({
+              prop: key, label: key
+            })
+          })
+          this.tableHead = arr
+          this.mapData = [res.data]
+          console.log(res, 'res')
+        })
       }
+      
     }
   };
 </script>
