@@ -27,6 +27,17 @@ class Data(models.Model):
         db_table = "data"
 
 
+class PercentageData(models.Model):
+    country = models.CharField(max_length=256)
+    provicne = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+    city = models.CharField(max_length=256)
+    year = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "per_data"
+
+
 class YearList(models.Model):
     year = models.CharField(max_length=256)
 
@@ -40,6 +51,7 @@ class ProvinceCityMap(models.Model):
 
     class Meta:
         db_table = "province_city_map"
+
 
 class ProvinceMaptype(models.Model):
     province = models.CharField(max_length=256)

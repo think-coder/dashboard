@@ -29,14 +29,24 @@ urlpatterns = [
     path('resource/get_city_by_province/<str:province>', views.Logic().get_city_by_province, name='get_city_by_province'),
     # 获取全国HTML图
     path('resource/get_map_by_country/<str:country>', views.Logic().get_map_by_country, name='get_map_by_country'),
+    # 获取全国HTML图 - 数据
+    path('resource/get_data_by_country/<str:country>', views.Logic().get_data_by_country, name='get_data_by_country'),
     # 获取省份HTML图
     path('resource/get_map_by_province/<str:province>', views.Logic().get_map_by_province, name='get_map_by_province'),
+    # 获取省份HTML图 - 数据
+    path('resource/get_data_by_province/<str:province>', views.Logic().get_data_by_province, name='get_data_by_province'),
     # 获取一线/新一线HTML图
     path('resource/get_map_of_top_city', views.Logic().get_map_of_top_city, name='get_map_of_top_city'),
+    # 获取一线/新一线HTML图 - 数据
+    path('resource/get_data_of_top_city', views.Logic().get_data_of_top_city, name='get_data_of_top_city'),
     # 获取需求增加最快的15种岗位HTML图
     path('resource/get_map_of_top_rise', views.Logic().get_map_of_top_rise, name='get_map_of_top_rise'),
+    # 获取需求增加最快的15种岗位HTML图 - 数据
+    path('resource/get_data_of_top_rise', views.Logic().get_data_of_top_rise, name='get_data_of_top_rise'),
     # 获取需求下降最快的15种岗位HTML图
     path('resource/get_map_of_tail_reduce', views.Logic().get_map_of_tail_reduce, name='get_map_of_tail_reduce'),
+    # 获取需求下降最快的15种岗位HTML图 - 数据
+    path('resource/get_data_of_tail_reduce', views.Logic().get_data_of_tail_reduce, name='get_data_of_tail_reduce'),
 
     # 导入数据
     path('tool/load_data', views.Logic().tool_load_data, name='tool_load_data'),

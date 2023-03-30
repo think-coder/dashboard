@@ -302,6 +302,11 @@ class Logic(object):
         self.generate_country_map(country)
 
         return render(request, self.file_name.format(file_name=country), {})
+    
+    # @method_decorator(login_required())
+    def get_data_by_country(self, request, country):
+        """获取国级展示图-数据"""
+        pass
 
     # @method_decorator(login_required())
     def get_map_by_province(self, request, province):
@@ -312,6 +317,11 @@ class Logic(object):
         self.generate_province_map(province)
 
         return render(request, self.file_name.format(file_name=province), {})
+    
+    # @method_decorator(login_required())
+    def get_data_by_province(self, request, province):
+        """获取省级展示图-数据"""
+        pass
 
     # @method_decorator(login_required())
     def get_map_of_top_city(self, request):
@@ -322,6 +332,11 @@ class Logic(object):
         self.generate_map_of_top_city()
 
         return render(request, self.file_name.format(file_name="新一线"), {})
+    
+    # @method_decorator(login_required())
+    def get_data_of_top_city(self, request):
+        """获取一线/新一线HTML图-数据"""
+        pass
 
     # @method_decorator(login_required())
     def get_map_of_top_rise(self, request):
@@ -332,6 +347,11 @@ class Logic(object):
         self.generate_map_of_top_rise()
 
         return render(request, self.file_name.format(file_name="增长最快"), {})
+    
+    # @method_decorator(login_required())
+    def get_data_of_top_rise(self, request):
+        """获取需求增加最快的15种岗位-数据"""
+        pass
 
     # @method_decorator(login_required())
     def get_map_of_tail_reduce(self, request):
@@ -342,6 +362,11 @@ class Logic(object):
         self.generate_map_of_tail_reduce()
 
         return render(request, self.file_name.format(file_name="下降最快"), {})
+    
+    # @method_decorator(login_required())
+    def get_data_of_tail_reduce(self, request):
+        """获取需求下降最快的15种岗位-数据"""
+        pass
 
     def generate_country_map(self, country):
         """生成国级HTML文件"""
