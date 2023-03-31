@@ -348,17 +348,22 @@ class Logic(object):
     # @method_decorator(login_required())
     def get_data_by_country(self, request, country):
         """获取国级展示图-数据"""
-        data_dict = dict()
+        data_list = list()
         year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         for year in year_list:
-            data_dict[year] = dict()
-            province_data = models.PercentageData.objects.all().filter(year=year).filter(country=country).filter(city="ALL")
-            for province in province_data:
-                data_dict[year][province.province] = province.percentage
-        
+            data_dict = dict()
+            data_dict["时间"] = year
+            for item in models.ProvinceCityMap.objects.all().distinct("province"):
+                data_dict[item.province] = "None"
+                province_data = models.PercentageData.objects.all().filter(year=year).filter(country=country).filter(city="ALL")
+                for province in province_data:
+                    if item.province == province.province:
+                        data_dict[item.province] = province.percentage
+            data_list.append(data_dict)
+
         return JsonResponse({
             "code": 200,
-            "data": data_dict
+            "data": data_list
         })
 
     # @method_decorator(login_required())
@@ -374,19 +379,24 @@ class Logic(object):
     # @method_decorator(login_required())
     def get_data_by_province(self, request, province):
         """获取省级展示图-数据"""
-        data_dict = dict()
+        data_list = list()
         year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         for year in year_list:
-            data_dict[year] = dict()
-            city_data = models.PercentageData.objects.all().filter(year=year).filter(country="中国").filter(province=province)
-            for city in city_data:
-                if city.city == "ALL":
-                    continue
-                data_dict[year][city.city] = city.percentage
+            data_dict = dict()
+            data_dict["时间"] = year
+            for item in models.ProvinceCityMap.objects.filter(province=province):
+                data_dict[item.city] = "None"
+                city_data = models.PercentageData.objects.all().filter(year=year).filter(country="中国").filter(province=province)
+                for city in city_data:
+                    if city.city == "ALL":
+                        continue
+                    if item.city == city.city:
+                        data_dict[item.city] = city.percentage
+            data_list.append(data_dict)
         
         return JsonResponse({
             "code": 200,
-            "data": data_dict
+            "data": data_list
         })
 
     # @method_decorator(login_required())
@@ -402,18 +412,21 @@ class Logic(object):
     # @method_decorator(login_required())
     def get_data_of_top_city(self, request):
         """获取一线/新一线HTML图-数据"""
-        data_dict = dict()
+        data_list = list()
         year_list = [data.year for data in models.YearList.objects.all().distinct("year")]
         for year in year_list:
-            data_dict[year] = dict()
+            data_dict = dict()
+            data_dict["时间"] = year
             for city in self.top_city_list:
+                data_dict[city] = "None"
                 city_data = models.PercentageData.objects.all().filter(year=year).filter(country="中国").filter(city=city).first()
                 if city_data:
-                    data_dict[year][city_data.city] = city_data.percentage
+                    data_dict[city] = city_data.percentage
+            data_list.append(data_dict)
         
         return JsonResponse({
             "code": 200,
-            "data": data_dict
+            "data": data_list
         })
 
 
