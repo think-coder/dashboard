@@ -305,7 +305,7 @@ import RefreshList from "./RefreshList.vue";
       },
       getMapData(){
         this.$http.get('/resource/get_all_province').then(res=>{
-          let arr = [{ prop: 'time', label: 'time'}]
+          let arr = [{ prop: '时间', label: '时间'}]
           res.data.forEach((item)=>{
             arr.push({ prop: item, label: item })
           })
