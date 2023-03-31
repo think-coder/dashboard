@@ -1,6 +1,6 @@
 ### backend
 ```
-python manage.py runsslserver --cert ./dashboard/ssl/_.cuhk.edu.cn.crt --key ./dashboard/ssl/_.cuhk.edu.cn.key 0:58000
+python manage.py runserver 0:58000
 ```
 
 ### front
