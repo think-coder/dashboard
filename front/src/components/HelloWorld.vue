@@ -335,13 +335,13 @@ import RefreshList from "./RefreshList.vue";
       getOneMapData(){
         this.$http.get('https://xray-lab.space/dashboard/resource/get_data_of_top_city').then(res=>{
           let arr = []
-          Object.keys(res.data).map(key => {
+          Object.keys(res.data[0]).map(key => {
             arr.push({
               prop: key, label: key
             })
           })
           this.tableHead = arr
-          this.mapData = [res.data]
+          this.mapData = res.data
           console.log(res, 'res')
         })
       }
