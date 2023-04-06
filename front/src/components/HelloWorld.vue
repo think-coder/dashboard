@@ -173,7 +173,7 @@ import RefreshList from "./RefreshList.vue";
       },
       'activeName'(newval){
         if(newval == 2){
-          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}`
+          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}?time=${new Date().getTime()}`
           this.getMapData()
         } else if(newval == 3){
           this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
@@ -287,7 +287,7 @@ import RefreshList from "./RefreshList.vue";
       },
       handleCountryMap(e){
         this.country = e.name
-        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}`
+        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}?time=${new Date().getTime()}`
       },
       handleProviceMap(e){
         this.province = e.name
