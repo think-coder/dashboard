@@ -429,7 +429,6 @@ class Logic(object):
             "data": data_list
         })
 
-
     # @method_decorator(login_required())
     def get_map_of_top_rise(self, request):
         """获取需求增加最快的15种岗位"""
@@ -606,33 +605,21 @@ class Logic(object):
 
     def generate_map_of_top_rise(self):
         """生成需求增加最快的15种岗位"""
-        title_list = [i.title for i in models.Data.objects.distinct("title")]
-        per_list = list()
-        map_dict = dict()
-        data_2017 = self.year_obj_map.get("2017")
-        data_2021 = self.year_obj_map.get("2021")
-        _num = 0
-        for i in title_list:
-            _num += 1
-            print("rise: {_num}|{_title}".format(_num=_num, _title=i))
-            left_point = data_2017.filter(title=i).count()
-            right_point = data_2021.filter(title=i).count()
-            if not left_point or not right_point:
-                per = round(right_point ** 1/4 - 1, 1)
-            else:
-                per = round((right_point / left_point) ** 1/4 - 1, 1)
-
-            per_list.append(per)
-            map_dict[str(per)] = i
-
-        top_per_list = per_list.sort()[0:15]
-        t_list = [map_dict.get(str(per)) for per in top_per_list]
+        top_per_data = models.PercentageTitle.objects.all().order_by("-percentage")[15:]
+        top_per_list = list()
+        top_title_list = list()
+        for i in top_per_data:
+            top_per_list.append(i.percentage)
+            top_title_list.append(i.title)
+        top_per_list = top_per_list[::-1]
+        top_title_list = top_title_list[::-1]
         d_bar = (
             Bar()
-            .add_xaxis(t_list)
+            .add_xaxis(top_title_list)
             .add_yaxis("每上市公司平均招聘量", top_per_list)
+            .reversal_axis()
             .set_global_opts(
-                title_opts=opts.TitleOpts(title="需求增加最快的15种岗位", subtitle=""),
+                title_opts=opts.TitleOpts(title="2017-2021需求复合增长率(%)", subtitle=""),
                 xaxis_opts=opts.AxisOpts(name="职位"),
                 yaxis_opts=opts.AxisOpts(name="增长率")
             )
@@ -642,33 +629,18 @@ class Logic(object):
 
     def generate_map_of_tail_reduce(self):
         """生成需求下降最快的15种岗位"""
-        title_list = [i.title for i in models.Data.objects.distinct("title")]
-        per_list = list()
-        map_dict = dict()
-        data_2017 = self.year_obj_map.get("2017")
-        data_2021 = self.year_obj_map.get("2021")
-        _num = 0
-        for i in title_list:
-            _num += 1
-            print("reduce: {_num}|{_title}".format(_num=_num, _title=i))
-            left_point = data_2017.filter(title=i).count()
-            right_point = data_2021.filter(title=i).count()
-            if not left_point or not right_point:
-                per = round(right_point ** 1/4 - 1, 1)
-            else:
-                per = round((right_point / left_point) ** 1/4 - 1, 1)
-
-            per_list.append(per)
-            map_dict[str(per)] = i
-
-        tail_per_list = per_list.sort()[-15:]
-        t_list = [map_dict.get(str(per)) for per in tail_per_list]
+        top_per_data = models.PercentageTitle.objects.all().order_by("percentage")[0:15]
+        top_per_list = list()
+        top_title_list = list()
+        for i in top_per_data:
+            top_per_list.append(i.percentage)
+            top_title_list.append(i.title)
         d_bar = (
             Bar()
-            .add_xaxis(t_list)
-            .add_yaxis("每上市公司平均招聘量", tail_per_list)
+            .add_xaxis(top_title_list)
+            .add_yaxis("每上市公司平均招聘量", top_per_list)
             .set_global_opts(
-                title_opts=opts.TitleOpts(title="需求下降最快的15种岗位", subtitle=""),
+                title_opts=opts.TitleOpts(title="2017-2021需求复合增长率(%)", subtitle=""),
                 xaxis_opts=opts.AxisOpts(name="职位"),
                 yaxis_opts=opts.AxisOpts(name="增长率")
             )

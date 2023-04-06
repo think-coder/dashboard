@@ -69,12 +69,12 @@
       <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"  :mapData="mapData" :tableHead="tableHead"/></div>
     </el-tab-pane>
     <el-tab-pane label="增长最快岗位" name="5">
-      <!-- <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div> -->
-      <div>Coding ...... Please wait ......</div>
+      <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div>
+      <!-- <div>Coding ...... Please wait ......</div> -->
     </el-tab-pane>
     <el-tab-pane label="下降最快岗位" name="6">
-      <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
-      <div>Coding ...... Please wait ......</div>
+      <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div>
+      <!-- <div>Coding ...... Please wait ......</div> -->
     </el-tab-pane>
     <el-tab-pane label="行业技能需求分布" name="7">
       <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
