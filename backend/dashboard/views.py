@@ -619,9 +619,20 @@ class Logic(object):
             .add_yaxis("每上市公司平均招聘量", top_per_list)
             .reversal_axis()
             .set_global_opts(
-                title_opts=opts.TitleOpts(title="2017-2021需求复合增长率(%)", subtitle=""),
-                xaxis_opts=opts.AxisOpts(name="职位"),
-                yaxis_opts=opts.AxisOpts(name="增长率")
+                title_opts=opts.TitleOpts(
+                    title="2017-2021需求复合增长率(%)", 
+                    subtitle="",
+                    pos_left="center",
+                    pos_top="10"
+                ),
+                # legend_opts=opts.LegendOpts(is_show= False,),
+                xaxis_opts=opts.AxisOpts(name="增长率"),
+                yaxis_opts=opts.AxisOpts(name="职位")
+            )
+            .set_series_opts(
+                markpoint_opts=opts.LabelOpts(is_show = False, position = 'inside'),
+                textstyle_opts=opts.TextStyleOpts(font_size = 6),
+                label_opts=opts.LabelOpts(position='right')
             )
             .render(self.save_path + self.file_name.format(file_name="增长最快"))
         )
@@ -639,6 +650,7 @@ class Logic(object):
             Bar()
             .add_xaxis(top_title_list)
             .add_yaxis("每上市公司平均招聘量", top_per_list)
+            .reversal_axis()
             .set_global_opts(
                 title_opts=opts.TitleOpts(title="2017-2021需求复合增长率(%)", subtitle=""),
                 xaxis_opts=opts.AxisOpts(name="职位"),
