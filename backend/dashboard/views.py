@@ -123,19 +123,25 @@ class Compute(object):
             province_data.percentage = per
         return per_list
 
-    def compute_rise_per(self, title):
+    def compute_rise_per(self, province):
         """计算增长率"""
-        left_point = self.year_obj_map.get("2017").filter(title=title).count()
-        right_point = self.year_obj_map.get("2021").filter(title=title).count()
-        if not left_point or not right_point:
-            per = round(right_point ** 1/4 - 1, 1)
-        else:
-            per = round((right_point / left_point) ** 1/4 - 1, 1)
-        models.PercentageTitle.objects.update_or_create(
-            title=title,
-            percentage=per
-        )
-        return (per, title)
+        province_data = self.province_obj_map.get(province)
+        province_total = len(province_data)
+        _num = 0
+        for employer in province_data.distinct("employer"):
+            left_point = province_data.filter(year="2017").filter(employer=employer.employer).count()
+            right_point = province_data.filter(year="2021").filter(employer=employer.employer).count()
+            if not left_point or not right_point:
+                per = round(right_point ** 1/4 - 1, 1)
+            else:
+                per = round((right_point / left_point) ** 1/4 - 1, 1)
+            models.PercentageTitle.objects.update_or_create(
+                title=employer.employer,
+                percentage=per
+            )
+            _num += 1
+
+            print("{}: {}/{} | {} | {}".format(province, _num, province_total, employer.employer, per))
 
 
 class Logic(object):
@@ -814,51 +820,19 @@ class Logic(object):
 
     def job_generate_map_of_rise_reduce(self, request):
         """任务: 生成需求增加/下降最快的15种岗位"""
-        _start = time.time()
+        start_time = time.time()
         print("Begin: job_generate_map_of_rise_reduce")
-        title_list = [i.title for i in models.Data.objects.distinct("title")]
-        total_title = len(title_list)
-        per_list = list()
-        map_dict = dict()
+        province_list = [i.province for i in models.ProvinceCityMap.objects.distinct("province")]
 
-        _num = 1
         executor = ThreadPoolExecutor(max_workers=8)
-        for per, title in executor.map(Compute().compute_rise_per, title_list):
-            per_list.append(per)
-            map_dict[str(per)] = title
-            print(_num, "/", total_title, title, per)
-            _num += 1
+        for province in province_list:
+            executor.submit(Compute().compute_rise_per, province)
 
-        # per_list.sort()
-        # top_per_list = per_list[0:15]
-        # tail_per_list = per_list[-15:]
-        # top_list = [map_dict.get(str(per)) for per in top_per_list]
-        # tail_list = [map_dict.get(str(per)) for per in tail_per_list]
-        # rise_bar = (
-        #     Bar()
-        #     .add_xaxis(top_list)
-        #     .add_yaxis("每上市公司平均招聘量", top_per_list)
-        #     .set_global_opts(
-        #         title_opts=opts.TitleOpts(title="需求增长最快的15种岗位", subtitle=""),
-        #         xaxis_opts=opts.AxisOpts(name="职位"),
-        #         yaxis_opts=opts.AxisOpts(name="增长率")
-        #     )
-        #     .render(self.save_path + self.file_name.format(file_name="增长最快"))
-        # )
-        # reduce_bar = (
-        #     Bar()
-        #     .add_xaxis(tail_list)
-        #     .add_yaxis("每上市公司平均招聘量", tail_per_list)
-        #     .set_global_opts(
-        #         title_opts=opts.TitleOpts(title="需求下降最快的15种岗位", subtitle=""),
-        #         xaxis_opts=opts.AxisOpts(name="职位"),
-        #         yaxis_opts=opts.AxisOpts(name="增长率")
-        #     )
-        #     .render(self.save_path + self.file_name.format(file_name="下降最快"))
-        # )
-        # _end = time.time()
-        # print("End: job_generate_map_of_rise_reduce")
-        # print("Total: {}".format(_end - _start))
+        executor.shutdown(wait=True)
+
+        end_time = time.time()
+        print("End: job_generate_map_of_rise_reduce")
+        print("Total: {} h".format(round((end_time - start_time)/60/60, 2)))
 
         return JsonResponse({
             "data": "OK"
