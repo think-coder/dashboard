@@ -125,23 +125,28 @@ class Compute(object):
 
     def compute_rise_per(self, province):
         """计算增长率"""
-        province_data = self.province_obj_map.get(province)
-        province_total = len(province_data)
+        province_data_2017 = self.province_obj_map.get(province).filter(year="2017")
+        province_data_2021 = self.province_obj_map.get(province).filter(year="2021")
+        title_all = list(set(
+            [data.title for data in province_data_2017] + [data.title for data in province_data_2021]
+        ))
+
         _num = 0
-        for employer in province_data.distinct("employer"):
-            left_point = province_data.filter(year="2017").filter(employer=employer.employer).count()
-            right_point = province_data.filter(year="2021").filter(employer=employer.employer).count()
-            if not left_point or not right_point:
-                per = round(right_point ** 1/4 - 1, 1)
-            else:
-                per = round((right_point / left_point) ** 1/4 - 1, 1)
+        for title in title_all:
+            left_point = province_data_2017.filter(title=title).count()
+            right_point = province_data_2021.filter(title=title).count()
+            if not left_point:
+                left_point = 1
+
+            per = round((right_point / left_point) ** 0.25 - 1, 1)
+
             models.PercentageTitle.objects.update_or_create(
-                title=employer.employer,
+                title=title,
                 percentage=per
             )
             _num += 1
 
-            print("{}: {}/{} | {} | {}".format(province, _num, province_total, employer.employer, per))
+            print("{}: {}/{} | {} | {}".format(province, _num, len(title_all), title, per))
 
 
 class Logic(object):
@@ -832,7 +837,7 @@ class Logic(object):
 
         end_time = time.time()
         print("End: job_generate_map_of_rise_reduce")
-        print("Total: {} h".format(round((end_time - start_time)/60/60, 2)))
+        print("<Node-2> Total: {} h".format(round((end_time - start_time)/60/60, 2)))
 
         return JsonResponse({
             "data": "OK"
