@@ -829,7 +829,7 @@ class Logic(object):
         print("Begin: job_generate_map_of_rise_reduce")
         province_list = [i.province for i in models.ProvinceCityMap.objects.distinct("province")]
 
-        executor = ThreadPoolExecutor(max_workers=8)
+        executor = ThreadPoolExecutor()
         for province in province_list:
             executor.submit(Compute().compute_rise_per, province)
 
@@ -837,7 +837,7 @@ class Logic(object):
 
         end_time = time.time()
         print("End: job_generate_map_of_rise_reduce")
-        print("<Node-2> Total: {} h".format(round((end_time - start_time)/60/60, 2)))
+        print("Total: {} h".format(round((end_time - start_time)/60/60, 2)))
 
         return JsonResponse({
             "data": "OK"
