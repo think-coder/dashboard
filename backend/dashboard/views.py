@@ -4,7 +4,7 @@ import time
 import gvcode
 import pyecharts.options as opts
 from pyecharts.charts import Map, Bar, Timeline
-from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, wait, ALL_COMPLETED
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
@@ -827,13 +827,12 @@ class Logic(object):
         """任务: 生成需求增加/下降最快的15种岗位"""
         start_time = time.time()
         print("Begin: job_generate_map_of_rise_reduce")
-        province_list = [i.province for i in models.ProvinceCityMap.objects.distinct("province")]
+        province_list = [i.province for i in models.ProvinceCityMap.objects.distinct("province")][0:10]
 
-        executor = ThreadPoolExecutor()
-        for province in province_list:
-            executor.submit(Compute().compute_rise_per, province)
-
-        executor.shutdown(wait=True)
+        executor = ProcessPoolExecutor(max_workers=8)
+        all_task = [executor.submit(Compute().compute_rise_per, province) for province in province_list]
+        wait(all_task, return_when=ALL_COMPLETED)
+        executor.shutdown()
 
         end_time = time.time()
         print("End: job_generate_map_of_rise_reduce")
