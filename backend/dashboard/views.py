@@ -827,7 +827,7 @@ class Logic(object):
         """任务: 生成需求增加/下降最快的15种岗位"""
         start_time = time.time()
         print("Begin: job_generate_map_of_rise_reduce")
-        province_list = [i.province for i in models.ProvinceCityMap.objects.distinct("province")][0:10]
+        province_list = [i.province for i in models.ProvinceCityMap.objects.distinct("province")]
 
         executor = ProcessPoolExecutor(max_workers=8)
         all_task = [executor.submit(Compute().compute_rise_per, province) for province in province_list]
