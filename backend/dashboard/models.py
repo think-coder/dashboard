@@ -46,6 +46,257 @@ class PercentageTitle(models.Model):
         db_table = "per_title"
 
 
+class PercentageTitle_XinJiang(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_xinjiang"
+
+
+class PercentageTitle_QingHai(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_qinghai"
+
+
+class PercentageTitle_HuBei(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_hubei"
+
+
+class PercentageTitle_ShanXi_1(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_shanxi_1"
+
+
+class PercentageTitle_YunNan(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_yunnan"
+
+
+class PercentageTitle_HeBei(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_hebei"
+
+
+class PercentageTitle_GuangXi(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_guangxi"
+
+
+class PercentageTitle_HaiNan(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_hainan"
+
+
+class PercentageTitle_ShangHai(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_shanghai"
+
+
+class PercentageTitle_LiaoNing(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_liaoning"
+
+
+class PercentageTitle_FuJian(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_fujian"
+
+
+class PercentageTitle_ShanXi_2(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_shanxi_2"
+
+
+class PercentageTitle_SiChuan(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_sichuan"
+
+
+class PercentageTitle_GuiZhou(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_guizhou"
+
+
+class PercentageTitle_GuangDong(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_guangdong"
+
+
+class PercentageTitle_BeiJing(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_beijing"
+
+
+class PercentageTitle_HeiLongJiang(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_heilongjiang"
+
+
+class PercentageTitle_JiangSu(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_jiangsu"
+
+
+class PercentageTitle_TianJin(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_tianjin"
+
+
+class PercentageTitle_ChongQing(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_chongqing"
+
+
+class PercentageTitle_ShanDong(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_shandong"
+
+
+class PercentageTitle_NeiMengGu(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_neimenggu"
+
+
+class PercentageTitle_NingXia(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_ningxia"
+
+
+class PercentageTitle_ZheJiang(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_zhejiang"
+
+
+class PercentageTitle_XiZang(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_xizang"
+
+
+class PercentageTitle_JiLin(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_jilin"
+
+
+class PercentageTitle_AnHui(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_anhui"
+
+
+class PercentageTitle_JiangXi(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_jiangxi"
+
+
+class PercentageTitle_GanSu(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_gansu"
+
+
+class PercentageTitle_HeNan(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_henan"
+
+
+class PercentageTitle_HuNan(models.Model):
+    title = models.CharField(max_length=256)
+    percentage = models.DecimalField(max_digits=18, decimal_places=2)
+
+    class Meta:
+        db_table = "per_title_hunan"
+
+
+
+
+
 class YearList(models.Model):
     year = models.CharField(max_length=256)
 
