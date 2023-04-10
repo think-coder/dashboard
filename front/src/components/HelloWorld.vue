@@ -1,10 +1,11 @@
 <template>
 <div class="container">
   <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="首页" name="1">
+    <el-tab-pane :label="$t('tabText.index')" name="1">
+      <!-- $t(tabText.index) -->
       <div class="index-wrap">
         <div class="refresh-list-con">
-          <el-input placeholder="请输入内容" v-model="searchData" clearable class="input-with-select" style="margin-bottom: 20px;">
+          <el-input :placeholder="$t('inputText.text')" v-model="searchData" clearable class="input-with-select" style="margin-bottom: 20px;">
             <el-button slot="append" icon="el-icon-search" :disabled="searchData == ''? true : false"  @click="getSearchData" :loading="searchLoading"></el-button>
           </el-input>
           <refresh-list @on-bottom="onBotttom">
@@ -49,14 +50,14 @@
         </div>
       </div>
     </el-tab-pane>
-    <el-tab-pane label="国级招聘数据" name="2">
+    <el-tab-pane  :label="$t('tabText.country')" name="2">
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleCountryMap">
         <el-tab-pane v-for="(item, index) in allCountry" :label="item" :key="index" :name="item">
           <div v-if="activeName==2 && item==country"><HtmlPanel :mapSrc="mapSrc" :mapData="mapData" :tableHead="tableHead" /></div>
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
-    <el-tab-pane label="省级招聘数据" name="3" >
+    <el-tab-pane :label="$t('tabText.provence')" name="3" >
       <el-tabs :tab-position="tabPosition" class="el-tabs-box" @tab-click="handleProviceMap">
         <el-tab-pane v-for="(item, index) in allProvince" :label="item" :key="index" :name="item">
           <div v-if="activeName==3 && item==province">
@@ -65,23 +66,25 @@
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
-    <el-tab-pane label="一线/新一线城市" name="4">
+    <el-tab-pane :label="$t('tabText.city')" name="4">
       <div v-if="activeName==4"><HtmlPanel :mapSrc="mapSrc"  :mapData="mapData" :tableHead="tableHead"/></div>
     </el-tab-pane>
-    <el-tab-pane label="增长最快岗位" name="5">
+    <el-tab-pane :label="$t('tabText.up')" name="5">
       <!-- <div v-if="activeName==5"><HtmlPanel :mapSrc="mapSrc"/></div> -->
       <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
-    <el-tab-pane label="下降最快岗位" name="6">
+    <el-tab-pane :label="$t('tabText.down')" name="6">
       <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
       <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
-    <el-tab-pane label="行业技能需求分布" name="7">
+    <el-tab-pane :label="$t('tabText.require')" name="7">
       <!-- <div v-if="activeName==6"><HtmlPanel :mapSrc="mapSrc"/></div> -->
       <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
   </el-tabs>
-  <div class="logout" @click="outlogFn">登出</div>
+  <div class="language" v-if="language" @click="changeLang('cn')">{{ $t('language.name') }}</div>
+  <div class="language l1" v-else  @click="changeLang('en')">{{ $t('language.name') }}</div>
+  <div class="logout" @click="outlogFn">{{ $t('loginStatus.login') }}</div>
 </div>
 </template>
 <script>
@@ -94,6 +97,7 @@ import RefreshList from "./RefreshList.vue";
     },
     data() {
       return {
+        language: true, // true 英文 false  中文
         activeName: '1',
         tabPosition: 'left',
         allProvince:[],
@@ -113,46 +117,47 @@ import RefreshList from "./RefreshList.vue";
         rightPageNum: 1,
         rightPageLimt: 10,
         mapSrc:'',
-        tableHeader:[{
-          prop:"股票代码",
-          label:"股票代码"
-        },{
-          prop:"雇主名称",
-          label:"雇主名称"
-        },{
-          prop:"职位名称",
-          label:"职位名称"
-        },{
-          prop:"薪资范围",
-          label:"薪资范围"
-        },{
-          prop:"年薪下限",
-          label:"年薪下限"
-        },{
-          prop:"年薪上限",
-          label:"年薪上限"
-        },{
-          prop:"工作经验要求",
-          label:"工作经验要求"
-        },{
-          prop:"工作地点",
-          label:"工作地点"
-        },{
-          prop:"学历要求",
-          label:"学历要求"
-        },{
-          prop:"发布日期",
-          label:"发布日期"
-        },{
-          prop:"语言要求",
-          label:"语言要求"
-        },{
-          prop:"年龄要求",
-          label:"年龄要求"
-        },{
-          prop:"雇主所在行业",
-          label:"雇主所在行业"
-        }],
+        tableHeader:[],
+        // tableHeader:[{
+        //   prop:"股票代码",
+        //   label:"股票代码"
+        // },{
+        //   prop:"雇主名称",
+        //   label:"雇主名称"
+        // },{
+        //   prop:"职位名称",
+        //   label:"职位名称"
+        // },{
+        //   prop:"薪资范围",
+        //   label:"薪资范围"
+        // },{
+        //   prop:"年薪下限",
+        //   label:"年薪下限"
+        // },{
+        //   prop:"年薪上限",
+        //   label:"年薪上限"
+        // },{
+        //   prop:"工作经验要求",
+        //   label:"工作经验要求"
+        // },{
+        //   prop:"工作地点",
+        //   label:"工作地点"
+        // },{
+        //   prop:"学历要求",
+        //   label:"学历要求"
+        // },{
+        //   prop:"发布日期",
+        //   label:"发布日期"
+        // },{
+        //   prop:"语言要求",
+        //   label:"语言要求"
+        // },{
+        //   prop:"年龄要求",
+        //   label:"年龄要求"
+        // },{
+        //   prop:"雇主所在行业",
+        //   label:"雇主所在行业"
+        // }],
         visible: false,
         mapData: [],
         tableHead: []
@@ -191,13 +196,71 @@ import RefreshList from "./RefreshList.vue";
       } 
     },
     created(){
-      this.indexLeftData(this.leftPageNum, this.leftPageLimt)                            
-    },
+      this.indexLeftData(this.leftPageNum, this.leftPageLimt)   
+      if(window.localStorage.getItem('user_lang') == null){
+        localStorage.setItem("user_lang", "cn")
+      }                         
+},
     mounted(){
       this.getAllProvince(),
       this.getAllCountry()
+      this.getHead()
     },
     methods: {
+      getHead(){
+        this.tableHeader = []
+        this.tableHeader = this.tableHeader.concat([{
+          prop:"股票代码",
+          label: this.$t('tableHead.StockCode')
+        },{
+          prop:"雇主名称",
+          label: this.$t('tableHead.employerName')
+        },{
+          prop:"职位名称",
+          label: this.$t('tableHead.JobTitle')
+        },{
+          prop:"薪资范围",
+          label: this.$t('tableHead.salaryRange')
+        },{
+          prop:"年薪下限",
+          label: this.$t('tableHead.LowerLimitOfAnnualSalary')
+        },{
+          prop:"年薪上限",
+          label: this.$t('tableHead.AnnualSalaryCeiling')
+        },{
+          prop:"工作经验要求",
+          label: this.$t('tableHead.WorkExperienceRequirements')
+        },{
+          prop:"工作地点",
+          label: this.$t('tableHead.WorkLocation')
+        },{
+          prop:"学历要求",
+          label: this.$t('tableHead.EducationalRequirements')
+        },{
+          prop:"发布日期",
+          label: this.$t('tableHead.ReleaseDate')
+        },{
+          prop:"语言要求",
+          label: this.$t('tableHead.salaryRange')
+        },{
+          prop:"年龄要求",
+          label: this.$t('tableHead.LanguageRequirements')
+        },{
+          prop:"雇主所在行业",
+          label: this.$t('tableHead.AgeRequirements')
+        }])
+      },
+      changeLang(lang){
+        if(lang === 'cn') {
+          this.language = false
+        } else {
+          this.language = true
+        }
+
+        this.$i18n.locale = lang; //关键语句
+        localStorage.setItem("user_lang", lang);
+        this.getHead()
+      },
       handleClick(tab, event) {
         console.log(tab, event);
       },
@@ -446,7 +509,7 @@ import RefreshList from "./RefreshList.vue";
     background-color: #fff;
   }
   .logout{
-    width: 50px;
+    width: 80px;
     height: 26px;
     text-align: center;
     background: #ccc;
@@ -457,5 +520,22 @@ import RefreshList from "./RefreshList.vue";
     top: 10px;
     right: 20px;
     cursor: pointer;
+  }
+  .language{
+    width: 80px;
+    height: 26px;
+    text-align: center;
+    background: #409EFF;
+    border-radius: 4px;
+    line-height: 26px;
+    font-size: 14px;
+    position: fixed;
+    top: 10px;
+    right: 120px;
+    cursor: pointer;
+    color: #fff;
+  }
+  .l1{
+    /* right: 200px; */
   }
 </style>
