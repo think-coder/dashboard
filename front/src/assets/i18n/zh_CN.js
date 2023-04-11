@@ -1,12 +1,14 @@
 module.exports = {
     language: {
-        name: 'English'
+        name: '英语',
+        china: '中文',
+        english: '英语'
     },
     inputText: {
         text: '请输入'
     },
     headerText: {
-        system: '学校招聘系统'
+        system: 'Dashboard 分析平台'
     },
     loginStatus: {
         login: '登出'

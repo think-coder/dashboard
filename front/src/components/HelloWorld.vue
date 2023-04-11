@@ -3,12 +3,19 @@
   <div class="header-wrap">
     <span class="header-sys-text">{{ $t('headerText.system') }}</span>
     <div class="header-r-wrap">
-      <div class="language" v-if="language" @click="changeLang('cn')">{{ $t('language.name') }}</div>
-      <div class="language l1" v-else  @click="changeLang('en')">{{ $t('language.name') }}</div>
+      <el-dropdown size="small" split-button type="primary" @command="changeLang">
+       {{ $t('language.name') }}     
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="cn">{{ $t('language.china') }}</el-dropdown-item>
+          <el-dropdown-item command="en">{{ $t('language.english') }}</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+      <!-- <div class="language" v-if="language" @click="changeLang('cn')">{{ $t('language.name') }}</div>
+      <div class="language l1" v-else  @click="changeLang('en')">{{ $t('language.name') }}</div> -->
       <div class="logout" @click="outlogFn">{{ $t('loginStatus.login') }}</div>
     </div>
   </div>
-  <el-tabs style="margin-top: 50px" v-model="activeName" @tab-click="handleClick">
+  <el-tabs style="margin-top: 70px" v-model="activeName" @tab-click="handleClick">
     <el-tab-pane :label="$t('tabText.index')" name="1">
       <div class="index-wrap">
         <div class="refresh-list-con">
@@ -265,6 +272,9 @@ import RefreshList from "./RefreshList.vue";
         localStorage.setItem("user_lang", lang);
         this.getHead()
       },
+      // handleCommand(command) {
+      //   this.$message('click on item ' + command);
+      // },
       handleClick(tab, event) {
         console.log(tab, event);
       },
@@ -514,11 +524,11 @@ import RefreshList from "./RefreshList.vue";
   }
   .logout{
     width: 80px;
-    height: 26px;
+    height: 32px;
     text-align: center;
     background: #ccc;
     border-radius: 4px;
-    line-height: 26px;
+    line-height: 32px;
     font-size: 14px;
     /* position: fixed;
     top: 10px;
@@ -542,7 +552,7 @@ import RefreshList from "./RefreshList.vue";
   }
   .header-wrap{
     width: 100%;
-    height: 50px;
+    height: 70px;
     padding: 0 20px;
     box-sizing: border-box;
     background: rgb(3, 3, 50);

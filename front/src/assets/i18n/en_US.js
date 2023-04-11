@@ -1,12 +1,14 @@
 module.exports = {
     language: {
-        name: '中文'
+        name: 'Chinese',
+        china: 'Chinese',
+        english: 'English'
     },
     inputText: {
         text: 'Please enter'
     },
     headerText: {
-        system: 'School Recruitment System'
+        system: 'Dashboard Analysis Platform'
     },
     loginStatus: {
         login: 'Log Out'
