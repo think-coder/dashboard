@@ -544,6 +544,7 @@ import RefreshList from "./RefreshList.vue";
     width: 100%;
     height: 50px;
     padding: 0 20px;
+    box-sizing: border-box;
     background: rgb(3, 3, 50);
     color: #fff;
     font-weight: 600;
