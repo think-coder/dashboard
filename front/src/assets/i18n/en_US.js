@@ -5,6 +5,9 @@ module.exports = {
     inputText: {
         text: 'Please enter'
     },
+    headerText: {
+        system: 'School Recruitment System'
+    },
     loginStatus: {
         login: 'Log Out'
     },

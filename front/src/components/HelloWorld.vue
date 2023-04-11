@@ -1,8 +1,15 @@
 <template>
 <div class="container">
-  <el-tabs v-model="activeName" @tab-click="handleClick">
+  <div class="header-wrap">
+    <span class="header-sys-text">{{ $t('headerText.system') }}</span>
+    <div class="header-r-wrap">
+      <div class="language" v-if="language" @click="changeLang('cn')">{{ $t('language.name') }}</div>
+      <div class="language l1" v-else  @click="changeLang('en')">{{ $t('language.name') }}</div>
+      <div class="logout" @click="outlogFn">{{ $t('loginStatus.login') }}</div>
+    </div>
+  </div>
+  <el-tabs style="margin-top: 50px" v-model="activeName" @tab-click="handleClick">
     <el-tab-pane :label="$t('tabText.index')" name="1">
-      <!-- $t(tabText.index) -->
       <div class="index-wrap">
         <div class="refresh-list-con">
           <el-input :placeholder="$t('inputText.text')" v-model="searchData" clearable class="input-with-select" style="margin-bottom: 20px;">
@@ -82,9 +89,6 @@
       <div>Coding ...... Please wait ......</div>
     </el-tab-pane>
   </el-tabs>
-  <div class="language" v-if="language" @click="changeLang('cn')">{{ $t('language.name') }}</div>
-  <div class="language l1" v-else  @click="changeLang('en')">{{ $t('language.name') }}</div>
-  <div class="logout" @click="outlogFn">{{ $t('loginStatus.login') }}</div>
 </div>
 </template>
 <script>
@@ -516,10 +520,11 @@ import RefreshList from "./RefreshList.vue";
     border-radius: 4px;
     line-height: 26px;
     font-size: 14px;
-    position: fixed;
+    /* position: fixed;
     top: 10px;
-    right: 20px;
+    right: 20px; */
     cursor: pointer;
+    margin-left: 20px;
   }
   .language{
     width: 80px;
@@ -529,13 +534,32 @@ import RefreshList from "./RefreshList.vue";
     border-radius: 4px;
     line-height: 26px;
     font-size: 14px;
-    position: fixed;
+    /* position: fixed;
     top: 10px;
-    right: 120px;
+    right: 120px; */
     cursor: pointer;
     color: #fff;
   }
-  .l1{
-    /* right: 200px; */
+  .header-wrap{
+    width: 100%;
+    height: 50px;
+    padding: 0 20px;
+    background: rgb(3, 3, 50);
+    color: #fff;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+  .header-sys-text{
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .header-r-wrap{
+    display: flex;
   }
 </style>

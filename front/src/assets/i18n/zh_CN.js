@@ -5,6 +5,9 @@ module.exports = {
     inputText: {
         text: '请输入'
     },
+    headerText: {
+        system: '学校招聘系统'
+    },
     loginStatus: {
         login: '登出'
     },
