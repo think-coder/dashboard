@@ -346,7 +346,7 @@ import RefreshList from "./RefreshList.vue";
       getMapData(){
         const lang = window.localStorage.getItem('user_lang')
         this.$http.get(`/resource/get_all_province/${lang}`).then(res=>{
-          let arr = [{ prop: $t('map.time'), label: $t('map.time')}]
+          let arr = [{ prop: this.$t('map.time'), label: this.$t('map.time')}]
           res.data.forEach((item)=>{
             arr.push({ prop: item, label: item })
           })
@@ -354,7 +354,7 @@ import RefreshList from "./RefreshList.vue";
         }).catch(()=>{
           alert('接口错误！')
         })
-        this.$http.get(`/resource/get_data_by_country/${$t('map.china')}`).then(res=>{
+        this.$http.get(`/resource/get_data_by_country/${this.$t('map.china')}`).then(res=>{
           this.mapData = res.data
         }).catch(()=>{
           alert('接口错误！')
