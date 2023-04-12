@@ -13,6 +13,11 @@ module.exports = {
     loginStatus: {
         login: 'Log Out'
     },
+    map:{
+        time: 'Time',
+        china: 'China',
+        shanghai: 'ShangHai'
+    },
     tabText: {
         index: 'Home Page',
         country: 'National Recruitment Data',

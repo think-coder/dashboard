@@ -10,8 +10,6 @@
           <el-dropdown-item command="en">{{ $t('language.english') }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-      <!-- <div class="language" v-if="language" @click="changeLang('cn')">{{ $t('language.name') }}</div>
-      <div class="language l1" v-else  @click="changeLang('en')">{{ $t('language.name') }}</div> -->
       <div class="logout" @click="outlogFn">{{ $t('loginStatus.login') }}</div>
     </div>
   </div>
@@ -108,11 +106,10 @@ import RefreshList from "./RefreshList.vue";
     },
     data() {
       return {
-        language: true, // true 英文 false  中文
         activeName: '1',
         tabPosition: 'left',
         allProvince:[],
-        province:'上海市',
+        province:'',
         allCountry: [],
         country: '',
         loading: false,
@@ -129,49 +126,9 @@ import RefreshList from "./RefreshList.vue";
         rightPageLimt: 10,
         mapSrc:'',
         tableHeader:[],
-        // tableHeader:[{
-        //   prop:"股票代码",
-        //   label:"股票代码"
-        // },{
-        //   prop:"雇主名称",
-        //   label:"雇主名称"
-        // },{
-        //   prop:"职位名称",
-        //   label:"职位名称"
-        // },{
-        //   prop:"薪资范围",
-        //   label:"薪资范围"
-        // },{
-        //   prop:"年薪下限",
-        //   label:"年薪下限"
-        // },{
-        //   prop:"年薪上限",
-        //   label:"年薪上限"
-        // },{
-        //   prop:"工作经验要求",
-        //   label:"工作经验要求"
-        // },{
-        //   prop:"工作地点",
-        //   label:"工作地点"
-        // },{
-        //   prop:"学历要求",
-        //   label:"学历要求"
-        // },{
-        //   prop:"发布日期",
-        //   label:"发布日期"
-        // },{
-        //   prop:"语言要求",
-        //   label:"语言要求"
-        // },{
-        //   prop:"年龄要求",
-        //   label:"年龄要求"
-        // },{
-        //   prop:"雇主所在行业",
-        //   label:"雇主所在行业"
-        // }],
         visible: false,
         mapData: [],
-        tableHead: []
+        tableHead: [],
       };
     },
     computed: {
@@ -188,17 +145,18 @@ import RefreshList from "./RefreshList.vue";
         }
       },
       'activeName'(newval){
+        const lang = window.localStorage.getItem('user_lang')
         if(newval == 2){
-          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}?time=${new Date().getTime()}`
+          this.mapSrc=`https://xray-lab.space/dashboard/get_map_by_country/${this.country}?time=${new Date().getTime()}`
           this.getMapData()
         } else if(newval == 3){
-          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
+          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}/${lang}`
           this.getProviceMapData(this.province)
         }else if(newval == 4){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_city"
+          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_of_top_city/${lang}`
           this.getOneMapData()  
         }else if(newval == 5){
-          this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_top_rise"
+          this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_of_top_rise/${lang}`
         }else if(newval == 6){
           this.mapSrc="https://xray-lab.space/dashboard/resource/get_map_of_tail_reduce"
         }else if(newval == 7){
@@ -260,27 +218,26 @@ import RefreshList from "./RefreshList.vue";
           prop:"雇主所在行业",
           label: this.$t('tableHead.AgeRequirements')
         }])
+        this.province = this.$t('map.shanghai')
       },
       changeLang(lang){
-        if(lang === 'cn') {
-          this.language = false
-        } else {
-          this.language = true
+        if(localStorage.getItem('user_lang') !== lang) {
+          this.$i18n.locale = lang; //关键语句
+          localStorage.setItem("user_lang", lang);
+          this.indexLeftData(this.leftPageNum, this.leftPageLimt)   
+          this.getAllProvince()
+          this.getAllCountry()
+          this.getHead()
+          
         }
-
-        this.$i18n.locale = lang; //关键语句
-        localStorage.setItem("user_lang", lang);
-        this.getHead()
       },
-      // handleCommand(command) {
-      //   this.$message('click on item ' + command);
-      // },
       handleClick(tab, event) {
         console.log(tab, event);
       },
       // 首页左侧数据
       indexLeftData(num,limt){
-        this.$http.get(`/resource/get_employer_by_limit/${num}/${limt}`).then(res=>{
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`/resource/get_employer_by_limit/${num}/${limt}/${lang}`).then(res=>{
           this.leftPageData = this.leftPageData.concat(res.data)
           if(num == 1){
             this.curLeftData = res.data[0]
@@ -294,8 +251,9 @@ import RefreshList from "./RefreshList.vue";
       // 左侧搜索
       getSearchData(){
         if(this.searchData !== ''){
+          const lang = window.localStorage.getItem('user_lang')
           this.searchLoading = true
-          this.$http.get(`/resource/get_employer/${this.searchData}`).then(res=>{
+          this.$http.get(`/resource/get_employer/${this.searchData}/${lang}`).then(res=>{
             this.leftPageData = res.data
             this.leftTotal = res.total
             this.searchLoading = false
@@ -321,7 +279,8 @@ import RefreshList from "./RefreshList.vue";
       },
       // 首页右侧数据
       getRightData(_curLeftData,_rightPageNum,_rightPageLimt){
-        this.$http.get(`/resource/get_employer_data_by_limit/${_curLeftData}/${_rightPageNum}/${_rightPageLimt}`).then(res=>{
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`/resource/get_employer_data_by_limit/${_curLeftData}/${_rightPageNum}/${_rightPageLimt}/${lang}`).then(res=>{
           this.rightPageData= res.data
           this.rightTotal = res.total
         }).catch(()=>{
@@ -346,7 +305,8 @@ import RefreshList from "./RefreshList.vue";
       },
       // 获取省份
       getAllProvince(){
-        this.$http.get('/resource/get_all_province').then(res=>{
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`/resource/get_all_province/${lang}`).then(res=>{
           this.allProvince = res.data
           this.province = res.data[0]
         }).catch(()=>{
@@ -355,7 +315,8 @@ import RefreshList from "./RefreshList.vue";
       },
       // 获取国家
       getAllCountry(){
-        this.$http.get('/resource/get_all_country').then(res=>{
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`/resource/get_all_country/${lang}`).then(res=>{
           this.allCountry = res.data
           this.country = res.data[0]
         }).catch(()=>{
@@ -363,12 +324,14 @@ import RefreshList from "./RefreshList.vue";
         })
       },
       handleCountryMap(e){
+        const lang = window.localStorage.getItem('user_lang')
         this.country = e.name
-        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}?time=${new Date().getTime()}`
+        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_country/${this.country}/${lang}?time=${new Date().getTime()}`
       },
       handleProviceMap(e){
+        const lang = window.localStorage.getItem('user_lang')
         this.province = e.name
-        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}`
+        this.mapSrc=`https://xray-lab.space/dashboard/resource/get_map_by_province/${this.province}/${lang}`
         this.getProviceMapData(e.name)
       },
       outlogFn(){
@@ -381,8 +344,9 @@ import RefreshList from "./RefreshList.vue";
         })
       },
       getMapData(){
-        this.$http.get('/resource/get_all_province').then(res=>{
-          let arr = [{ prop: '时间', label: '时间'}]
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`/resource/get_all_province/${lang}`).then(res=>{
+          let arr = [{ prop: $t('map.time'), label: $t('map.time')}]
           res.data.forEach((item)=>{
             arr.push({ prop: item, label: item })
           })
@@ -390,14 +354,15 @@ import RefreshList from "./RefreshList.vue";
         }).catch(()=>{
           alert('接口错误！')
         })
-        this.$http.get('/resource/get_data_by_country/中国').then(res=>{
+        this.$http.get(`/resource/get_data_by_country/${$t('map.china')}`).then(res=>{
           this.mapData = res.data
         }).catch(()=>{
           alert('接口错误！')
         })
       },
       getProviceMapData(province){
-        this.$http.get(`https://xray-lab.space/dashboard/resource/get_data_by_province/${province}`).then(res=>{
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`https://xray-lab.space/dashboard/resource/get_data_by_province/${province}/${lang}`).then(res=>{
           let arr = []
           Object.keys(res.data[0]).map(key => {
             arr.push({
@@ -410,7 +375,8 @@ import RefreshList from "./RefreshList.vue";
         })
       },
       getOneMapData(){
-        this.$http.get('https://xray-lab.space/dashboard/resource/get_data_of_top_city').then(res=>{
+        const lang = window.localStorage.getItem('user_lang')
+        this.$http.get(`https://xray-lab.space/dashboard/resource/get_data_of_top_city/${lang}`).then(res=>{
           let arr = []
           Object.keys(res.data[0]).map(key => {
             arr.push({
@@ -419,7 +385,6 @@ import RefreshList from "./RefreshList.vue";
           })
           this.tableHead = arr
           this.mapData = res.data
-          console.log(res, 'res')
         })
       }
       
