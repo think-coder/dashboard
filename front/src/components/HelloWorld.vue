@@ -39,11 +39,11 @@
               </el-table-column>
               <el-table-column
                 fixed="right"
-                label="操作"
-                width="160" >
+                :label="$t('modal.Operate')"
+                width="240" >
                     <template slot-scope="scope">
-                      <el-button slot="reference" type="text" size="small" @click="handleClickZzDetail(scope.row)">职责范围</el-button>
-                      <el-button slot="reference" type="text" size="small" @click="handleClickRzDetail(scope.row)">任职要求</el-button>
+                      <el-button slot="reference" type="text" size="small" @click="handleClickZzDetail(scope.row)">{{ $t('modal.Responsibilities') }}</el-button>
+                      <el-button slot="reference" type="text" size="small" @click="handleClickRzDetail(scope.row)">{{ $t('modal.JobRequirements') }}</el-button>
                     </template>
               </el-table-column>
             </el-table>
@@ -294,13 +294,13 @@ import RefreshList from "./RefreshList.vue";
       },
       // 右侧查看详情
       handleClickZzDetail(row) {
-        this.$alert(row.pos_require, '职责范围', {
-          confirmButtonText: '确定',
+        this.$alert(row.pos_require, $t('modal.Responsibilities'), {
+          confirmButtonText: $t('modal.Sure'),
         });
         console.log(row);
       },
       handleClickRzDetail(row) {
-        this.$alert(row.pos_text, '任职要求', {
+        this.$alert(row.pos_text, $t('modal.JobRequirements'), {
         });
       },
       // 获取省份
@@ -335,6 +335,8 @@ import RefreshList from "./RefreshList.vue";
         this.getProviceMapData(e.name)
       },
       outlogFn(){
+        window.localStorage.setItem('user_lang','null')
+        this.$router.replace('/')
         this.$http.post('/user/logout',{
           username: this.$route.query.username
         }).then(res=>{

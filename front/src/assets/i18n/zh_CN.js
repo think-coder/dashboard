@@ -1,6 +1,6 @@
 module.exports = {
     language: {
-        name: '英语',
+        name: '中文',
         china: '中文',
         english: '英语'
     },
@@ -44,7 +44,8 @@ module.exports = {
     modal:{
         Responsibilities: '职责范围',
         JobRequirements:'任职要求',
-        Operate: '操作'
+        Operate: '操作',
+        Sure: '确定'
     },
     util: {
         InterfaceError:'接口错误'

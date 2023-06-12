@@ -1,6 +1,6 @@
 module.exports = {
     language: {
-        name: 'Chinese',
+        name: 'English',
         china: 'Chinese',
         english: 'English'
     },
@@ -44,7 +44,8 @@ module.exports = {
     modal:{
         Responsibilities: 'Responsibilities',
         JobRequirements:'JobRequirements',
-        Operate: 'Operate'
+        Operate: 'Operate',
+        Sure: 'Sure'
     },
     util: {
         InterfaceError:'InterfaceError'
