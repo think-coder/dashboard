@@ -1,5 +1,6 @@
 <template>
   <div class="login-wrap">
+    <div class="name-title">招聘数据分析平台</div>
     <div class="inner">
       <div class="login-box">
         <div class="user-login">欢迎注册</div>
@@ -105,23 +106,30 @@ export default {
 .login-wrap{
   width: 100%;
   height: 100vh;
-  background: url('https://www.2008php.com/2013_Website_appreciate/2013-01-20/20130120011338.jpg') no-repeat;
+  background: url('../assets/images/bg.jpg') no-repeat;
   background-size: 100% 100%;
   position: relative;
 }
 
 .inner{
   width: 330px;
-  height: 500px;
-  background: rgba(0,0,0,0.3);
-  box-shadow: 0 4px 4px 0 rgb(35, 32, 45);
+  height: 480px;
   position: absolute;
   top: 50%;
-  left: 70%;
-  margin-top: -200px;
-  display: flex;
+  left: 66%;
+  margin-top: -240px;
   border-radius: 10px;
 
+}
+
+.name-title{
+  text-align: center;
+  font-size: 64px;
+  font-weight: 600;
+  color: #fff;
+  position: absolute;
+  top: 6%;
+  left: 54%;
 }
 
 .bg-img img{
@@ -133,26 +141,28 @@ export default {
 
 .login-box{
   width:350px;
-  height: 400px;
-  border-radius: 0px 10px 10px 0px ;
+  height: 460px;
+  border-radius: 10px;
   padding:0px 20px;
   box-sizing: border-box;
+  background: #fff;
+  box-shadow: 4px 4px 10px rgb(133, 113, 241);
 }
 .user-login{
   padding-top: 30px;
   box-sizing: border-box;
   font-size: 20px;
-  color:rgba(255,255,255,0.8);
+  color:rgb(47 81 229 / 80%);
   text-align: center;
   font-weight: 888;
   letter-spacing: 8px;
 }
 .login-tip{
-  padding: 4px 0px 24px 0px;
+  padding: 10px 0px 24px 0px;
   box-sizing: border-box;
   text-align: center;
   font-size: 12px;
-  color:rgb(232,233, 234);
+  color:rgb(127, 129, 131);
   letter-spacing: 2px;
 }
 .getcode-box{
@@ -180,13 +190,13 @@ export default {
   position: absolute;
   top:0;
   left:0;
-  color:#fff;
+  color:rgb(127, 129, 131);;
   z-index:455;
 }
 
 .input-title{
   font-size: 15px;
-  color: rgba(255,255,255,0.8);;
+  color: rgb(47 81 229 / 80%);
   font-weight: 600;
   margin-bottom: 5px;
   margin-left: 20px;
@@ -255,7 +265,7 @@ export default {
   color:#fff;
   font-weight: 600;
   letter-spacing: 4px;
-  background: rgba(78,170, 238, 0.74);
+  background: rgb(47 81 229 / 80%);
 }
     
 
@@ -275,12 +285,12 @@ export default {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  color: #ccc;
+  color: rgb(127, 129, 131);
   font-size: 12px;
   margin-top: 20px;
 }
 .account-box span{
-  color: #fff;
+  color: rgb(127, 129, 131);
   font-weight: 600;
 }
 .account-box span:hover{
