@@ -465,13 +465,13 @@ import RefreshList from "./RefreshList.vue";
     color:#409EFF!important;
   }
   .index-content{
-    width: 1600px;
+    width: 100%;
     height: 800px;
     padding: 0 20px;
     box-sizing: border-box;
   }
   .split-page{
-    width: 1600px;
+    width: 100%;
     height: 100px;
     margin-top: 20px;
     margin-bottom: 20px;
