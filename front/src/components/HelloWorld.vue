@@ -294,13 +294,13 @@ import RefreshList from "./RefreshList.vue";
       },
       // 右侧查看详情
       handleClickZzDetail(row) {
-        this.$alert(row.pos_require, $t('modal.Responsibilities'), {
-          confirmButtonText: $t('modal.Sure'),
+        this.$alert(row.pos_require, this.$t('modal.Responsibilities'), {
+          confirmButtonText:  this.$t('modal.Sure'),
         });
         console.log(row);
       },
       handleClickRzDetail(row) {
-        this.$alert(row.pos_text, $t('modal.JobRequirements'), {
+        this.$alert(row.pos_text,  this.$t('modal.JobRequirements'), {
         });
       },
       // 获取省份
