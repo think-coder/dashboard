@@ -427,7 +427,7 @@ import RefreshList from "./RefreshList.vue";
     display: inline-block;
     vertical-align: middle;
     width:15%;
-    height:100%;
+    height:900px;
     padding: 20px;
     box-sizing: border-box;
     flex-shrink: 0;
@@ -440,7 +440,7 @@ import RefreshList from "./RefreshList.vue";
     display: inline-block;
     vertical-align: middle;
     width:85%;
-    height:100%;
+    height:900px;
     padding: 20px;
     box-sizing: border-box;
     flex-shrink: 0;
@@ -466,13 +466,12 @@ import RefreshList from "./RefreshList.vue";
   }
   .index-content{
     width: 100%;
-    height: 800px;
+    height: 786px;
     padding: 0 20px;
     box-sizing: border-box;
   }
   .split-page{
     width: 100%;
-    height: 100px;
     margin-top: 20px;
     margin-bottom: 20px;
     padding: 0 20px;
